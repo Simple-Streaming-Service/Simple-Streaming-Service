@@ -1,0 +1,23 @@
+:root {
+    --shadow-color: rgba(8, 7, 16, 0.6);
+    --gallery-shadow-color: rgba(8, 7, 16, 0.8);
+
+    --nav-color: rgba(40, 40, 50, 0.5);
+    --nav-color-solid: rgba(28, 28, 38, 1);
+    --footer-color: var(--nav-color);
+    --header-color: rgba(40, 40, 40, 0.2);
+    --stat-color: var(--header-color);
+    --skills-color: var(--header-color);
+    --contacts-color: var(--header-color);
+
+    --nav-border-color: rgb(35, 35, 35);
+    --footer-border-color: var(--nav-border-color);
+    --header-border-color: rgb(30, 30, 30);
+    --stat-border-color: var(--header-border-color);
+    --stat-contacts-color: var(--header-border-color);
+
+    --stream-card-color: rgba(40, 40, 50, 0.5);
+
+    --button-color: rgba(100, 100, 100, 0.5);
+    --active-page-color: rgb(102, 78, 124);
+}

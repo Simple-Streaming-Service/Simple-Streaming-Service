@@ -1,0 +1,11 @@
+* {
+    font-family: Montserrat;
+    /*font-size: 1rem;*/
+    color: azure;
+    box-sizing: border-box;
+    transition: all 0.2s ease !important;
+}
+
+.none {
+    display: none !important;
+}

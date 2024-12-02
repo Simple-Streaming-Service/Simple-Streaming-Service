@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div class="nav"><h1 class="logo">Live Streams</h1></div>
+    <div class="container">
+         <ul class="streams">
+        {% for path in paths %}
+             <li class="stream_card">
+                 <div class="card_container">
+                     <a>Topic</a>
+                     <h1>{{ path }}</h1>
+                     <a>Is now live</a>
+                 </div>
+                <a class="btn" href="{{ live_path }}/{{ path }}">Watch live</a>
+             </li>
+        {% endfor %}
+         </ul>
+    </div>
+    <div class="after_container"></div>
+</body>
+</html>
