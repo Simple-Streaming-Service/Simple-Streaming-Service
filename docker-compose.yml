@@ -1,5 +1,7 @@
 services:
     web-app:
+        environment:
+            env_file: .env
         build: .
         command: ./boot.sh
     nginx:
