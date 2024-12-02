@@ -4,6 +4,8 @@ services:
             env_file: .env
         build: .
         command: ./boot.sh
+        ports:
+            - "5000:5000"
     nginx:
         image: nginx:alpine
         ports:
@@ -11,4 +13,4 @@ services:
         depends_on:
             - web-app
         volumes:
-            - ./nginx.conf:/etc/nginx/nginx.conf
+            - ./default.conf:/etc/nginx/conf.d/default.conf
