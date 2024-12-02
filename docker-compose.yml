@@ -1,7 +1,6 @@
 services:
     mediamtx:
         image: bluenviron/mediamtx
-        name: mediamtx
         ports:
             - "1935:1935"
             - "1936:1936"
