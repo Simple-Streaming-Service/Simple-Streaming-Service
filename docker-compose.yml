@@ -1,11 +1,6 @@
 services:
     mediamtx:
         image: bluenviron/mediamtx
-        ports:
-            - "1935:1935"
-            - "1936:1936"
-            - "8888:8888"
-            - "9997:9997"
         volumes:
             - "${PWD}/mediamtx.yml:/mediamtx.yml:ro"
             - "${PWD}/server.key:/server.key:ro"
