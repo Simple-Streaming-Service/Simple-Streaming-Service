@@ -2,9 +2,9 @@ services:
     mediamtx:
         image: bluenviron/mediamtx
         volumes:
-            - "${PWD}/mediamtx.yml:/mediamtx.yml:ro"
-            - "${PWD}/server.key:/server.key:ro"
-            - "${PWD}/server.crt:/server.crt:ro"
+            - "./mediamtx.yml:/mediamtx.yml:ro"
+            - "./server.key:/server.key:ro"
+            - "./server.crt:/server.crt:ro"
         network_mode: host
     flask-video-app:
         environment:
