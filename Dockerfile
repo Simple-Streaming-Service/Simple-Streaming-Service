@@ -11,7 +11,6 @@ COPY app.py boot.sh ./
 RUN chmod a+x boot.sh
 
 ENV FLASK_APP app.py
-RUN flask translate compile
 
 EXPOSE 5000
 ENTRYPOINT ["./boot.sh"]
