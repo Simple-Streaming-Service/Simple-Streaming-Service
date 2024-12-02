@@ -1,5 +1,18 @@
 services:
-    web-app:
+    mediamtx:
+        image: bluenviron/mediamtx
+        name: mediamtx
+        ports:
+            - "1935:1935"
+            - "1936:1936"
+            - "8888:8888"
+            - "9997:9997"
+        volumes:
+            - "${PWD}/mediamtx.yml:/mediamtx.yml:ro"
+            - "${PWD}/server.key:/server.key:ro"
+            - "${PWD}/server.crt:/server.crt:ro"
+        network_mode: host
+    flask-video-app:
         environment:
           API_HOST: ${API_HOST}
           LIVE_HOST: ${LIVE_HOST}
