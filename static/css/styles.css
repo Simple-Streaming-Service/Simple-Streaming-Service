@@ -131,7 +131,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 20%;
+  width: fit-content;
   margin: 20px 0;
   padding: 20px;
   background: var(--stream-card-color);
