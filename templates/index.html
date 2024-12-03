@@ -2,12 +2,16 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Streams</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
     <div class="nav"><h1 class="logo">Live Streams</h1></div>
     <div class="container">
+    {% if paths == [] %}
+        <h1 class="nostreams">No live streams available</h1>
+    {% else %}
          <ul class="streams">
         {% for path in paths %}
              <li class="stream_card">
@@ -20,6 +24,7 @@
              </li>
         {% endfor %}
          </ul>
+    {% endif %}
     </div>
     <div class="after_container"></div>
 </body>

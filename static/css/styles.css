@@ -96,6 +96,7 @@ body {
     background: var(--nav-color);
 }
 
+
 .after_container {
     width: 70%;
     height: 200px;
@@ -105,6 +106,19 @@ body {
     background: var(--nav-color);
     background: linear-gradient(to bottom, var(--nav-color), rgba(40, 40, 50, 0));
 }
+
+
+@media (max-width: 768px) {
+    .container {
+        width: 90%;
+    }
+
+    .after_container {
+        width: 90%;
+    }
+}
+
+/* stream card */
 
 .streams {
   display: flex;
@@ -151,6 +165,15 @@ body {
 h1 {
   font-size: 32px;
   margin-bottom: 10px;
+}
+
+.nostreams {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 24px;
+  margin: 0;
+  padding: 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .nav {
