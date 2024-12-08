@@ -1,4 +1,4 @@
-# Video Service
+# Simple Streaming Service
 
 ## Description
 ...
@@ -13,9 +13,13 @@ And then create a `.env` file in the root directory of the project with the foll
 # Database
 MONGO_USERNAME=root
 MONGO_PASSWORD=root
+MONGO_HOST=localhost
+MONGO_PORT=27017
+
 # Video Service
-API_HOST=http://localhost:9997
-LIVE_HOST=http://localhost:8888
+MTX_API_HOST=http://localhost:9997
+MTX_LIVE_HOST=http://localhost:8888
+
 ```
 And then run the following command:
 ```shell
