@@ -5,9 +5,11 @@ COPY requirements.txt requirements.txt
 RUN pip install -r requirements.txt
 RUN pip install gunicorn
 
-COPY static static
-COPY templates templates
-COPY app.py boot.sh ./
+COPY ./app ./app
+COPY boot.sh ./
+COPY config.py ./
+COPY wsgi.py ./
+
 RUN chmod a+x boot.sh
 
 ENV FLASK_APP app.py
