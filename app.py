@@ -10,7 +10,7 @@ app.secret_key = os.getenv("SECRET_KEY", "secret")
 # MediaMTX
 app.mtx_api_host = os.getenv("MTX_API_HOST", "localhost")
 app.mtx_api_host_port = os.getenv("MTX_API_HOST_PORT", "9997")
-app.mtx_api_uri = app.mtx_api_host + ":" + app.mtx_api_host_port
+app.mtx_api_uri = "http://" + app.mtx_api_host + ":" + app.mtx_api_host_port
 
 # MediaMTX HLS
 app.mtx_hls_host = os.getenv("MTX_LIVE_HOST", "localhost")
