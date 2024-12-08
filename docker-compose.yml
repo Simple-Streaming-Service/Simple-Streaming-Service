@@ -1,10 +1,10 @@
 services:
-    postgres:
-        image: 'postgres:latest'
+    mongo:
+        image: mongo
+        restart: always
         environment:
-            - 'POSTGRES_DB=data_server'
-            - 'POSTGRES_PASSWORD=data_87468757'
-            - 'POSTGRES_USER=admin'
+            MONGO_INITDB_ROOT_USERNAME: video_service
+            MONGO_INITDB_ROOT_PASSWORD: video_134887
         network_mode: host
     mediamtx:
         image: bluenviron/mediamtx
@@ -15,7 +15,7 @@ services:
         network_mode: host
     flask-video-app:
         depends_on:
-            - postgres
+            - mongo
         environment:
           API_HOST: ${API_HOST}
           LIVE_HOST: ${LIVE_HOST}

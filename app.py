@@ -7,7 +7,12 @@ import requests
 app = Flask(__name__, static_folder='static', template_folder='templates')
 app.secret_key = "super secret key"
 app.api_host = os.getenv("API_HOST", "http://localhost:9997")
-app.live_host = os.getenv("LIVE_HOST", "http://localhost:8888")
+if len(app.api_host) == 0:
+    app.api_host = "http://localhost:9997"
+
+app.live_host = os.getenv("LIVE_HOST", "https://localhost:8888")
+if len(app.live_host) == 0:
+    app.live_host = "https://localhost:8888"
 
 
 @app.get("/")
