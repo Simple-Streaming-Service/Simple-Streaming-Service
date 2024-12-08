@@ -13,5 +13,5 @@ def index():
         data = r.json()
         if "items" in data:
             res = [x["name"] for x in data["items"]]
-            return render_template("index.html", paths=res, live_path=config["STREAMS_REDIRECT"])
+            return render_template("index.html", paths=res)
     return {"error": f"MediaMTX API on {config["MTX_API_URI"]} not available"}
