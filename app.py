@@ -17,6 +17,8 @@ app.mtx_hls_host = os.getenv("MTX_LIVE_HOST", "localhost")
 app.mtx_hls_host_port = os.getenv("MTX_LIVE_HOST_PORT", "8888")
 app.mtx_hls_uri = app.mtx_hls_host + ":" + app.mtx_hls_host_port
 
+app.streams_redirect = "https://" + app.mtx_hls_host
+
 
 # MongoDB
 app.mongo_host = os.getenv("MONGO_HOST", "localhost")
@@ -36,7 +38,7 @@ def index():
         data = r.json()
         if "items" in data:
             res = [x["name"] for x in data["items"]]
-            return render_template("index.html", paths=res, live_path=app.mtx_hls_uri)
+            return render_template("index.html", paths=res, live_path=app.streams_redirect)
     return {"error": f"MediaMTX API on {app.mtx_api_uri} not available"}
 
 
