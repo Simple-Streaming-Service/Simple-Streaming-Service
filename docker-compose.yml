@@ -17,13 +17,13 @@ services:
         depends_on:
             - mongo
         environment:
-          MTX_API_HOST: ${MTX_API_HOST}
-          MTX_LIVE_HOST: ${MTX_LIVE_HOST}
-          MONGO_HOST: ${MONGO_HOST}
-          MONGO_PORT: ${MONGO_PORT}
-          SECRET_KEY: ${SECRET_KEY}
-          MONGO_USERNAME: ${MONGO_USERNAME}
-          MONGO_PASSWORD: ${MONGO_PASSWORD}
+            MTX_API_HOST: ${MTX_API_HOST}
+            MTX_LIVE_HOST: ${MTX_LIVE_HOST}
+            MONGO_HOST: ${MONGO_HOST}
+            MONGO_PORT: ${MONGO_PORT}
+            SECRET_KEY: ${SECRET_KEY}
+            MONGO_USERNAME: ${MONGO_USERNAME}
+            MONGO_PASSWORD: ${MONGO_PASSWORD}
         build: .
         command: ./boot.sh
         network_mode: host
