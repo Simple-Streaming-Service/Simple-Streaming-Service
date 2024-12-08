@@ -9,5 +9,8 @@
 {% endblock %}
 
 {% block content %}
-    <iframe class="video-container" src="{{ live_path }}/{{ path }}" scrolling="no"></iframe>
+    <div class="streaming-container">
+        <iframe class="video-container" src="{{ live_path }}/{{ path }}" scrolling="no"></iframe>
+        <div class="chat-container"></div>
+    </div>
 {% endblock %}

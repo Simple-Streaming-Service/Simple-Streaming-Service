@@ -4,8 +4,12 @@
 @import url("colors.css");
 
 body {
-  background: #1a1a22;
-  height: 100vh;
+    background: #1a1a22;
+    height: 100vh;
+}
+
+.content {
+    margin: 3vh;
 }
 
 .center {

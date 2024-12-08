@@ -9,15 +9,19 @@ app.secret_key = os.getenv("SECRET_KEY", "secret")
 
 # MediaMTX
 app.mtx_api_host = os.getenv("MTX_API_HOST", "localhost")
+if len(app.mtx_api_host) == 0: app.mtx_api_host = "localhost"
 app.mtx_api_host_port = os.getenv("MTX_API_HOST_PORT", "9997")
+if len(app.mtx_api_host_port) == 0: app.mtx_api_host_port = "9997"
 app.mtx_api_uri = "http://" + app.mtx_api_host + ":" + app.mtx_api_host_port
 
 # MediaMTX HLS
 app.mtx_hls_host = os.getenv("MTX_LIVE_HOST", "localhost")
+if len(app.mtx_hls_host) == 0: app.mtx_hls_host = "localhost"
 app.mtx_hls_host_port = os.getenv("MTX_LIVE_HOST_PORT", "8888")
+if len(app.mtx_hls_host_port) == 0: app.mtx_hls_host_port = "8888"
 app.mtx_hls_uri = app.mtx_hls_host + ":" + app.mtx_hls_host_port
 
-app.streams_redirect = "https://" + app.mtx_hls_host
+app.streams_redirect = "https://" + app.mtx_hls_uri
 
 
 # MongoDB
