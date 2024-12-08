@@ -7,7 +7,7 @@ RUN pip install gunicorn
 
 COPY static static
 COPY templates templates
-COPY app.py boot.sh ./
+COPY app/app.py boot.sh ./
 RUN chmod a+x boot.sh
 
 ENV FLASK_APP app.py
