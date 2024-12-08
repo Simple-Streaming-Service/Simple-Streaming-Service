@@ -1,13 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Streams</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-</head>
-<body>
-    <div class="nav"><h1 class="logo">Live Streams</h1></div>
+{% extends 'base.html' %}
+
+{% block title %}
+    Streams
+{% endblock %}
+
+{% block content %}
     <div class="container">
     {% if paths == [] %}
         <h1 class="nostreams">No live streams available</h1>
@@ -20,12 +17,11 @@
                      <h1>{{ path }}</h1>
                      <a>Is now live</a>
                  </div>
-                <a class="btn" href="{{ live_path }}/{{ path }}">Watch live</a>
+                <a class="btn" href="/{{ path }}">Watch live</a>
              </li>
         {% endfor %}
          </ul>
     {% endif %}
     </div>
     <div class="after_container"></div>
-</body>
-</html>
+{% endblock %}

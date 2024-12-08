@@ -1,12 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{{ username }} | {{ title }}</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-</head>
-<body>
-    <iframe src="{{ live_path }}/{{ path }}" scrolling="no"></iframe>
-</body>
-</html>
+{% extends 'base.html' %}
+
+{% block head %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/stream.css') }}">
+{% endblock %}
+
+{% block title %}
+    {{ username }} | {{ title }}
+{% endblock %}
+
+{% block content %}
+    <iframe class="video-container" src="{{ live_path }}/{{ path }}" scrolling="no"></iframe>
+{% endblock %}

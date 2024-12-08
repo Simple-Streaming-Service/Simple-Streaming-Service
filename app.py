@@ -22,15 +22,12 @@ def index():
         data = r.json()
         if "items" in data:
             res = [x["name"] for x in data["items"]]
-            return render_template("index.html", paths=res, live_path=app.live_host)
+            return render_template("index.html", paths=res)
     return {"error": f"API {app.api_host} not available"}
 
-@app.get("/stream/watch")
-def stream_watch():
-    path = request.args.get('path')
-    if path:
-        return render_template("stream.html", path=path, live_path=app.live_host)
-    return {"error": "Stream not found!"}
+@app.get("/<user>")
+def stream_watch(user):
+    return render_template("stream.html", path=user, live_path=app.live_host)
 
 @app.get("/msg/list")
 def msg_list():
