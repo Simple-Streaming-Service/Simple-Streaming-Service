@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block head %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/stream.css') }}">
+{% endblock %}
+
+{% block title %}
+    {{ username }} | {{ title }}
+{% endblock %}
+
+{% block content %}
+    <div class="streaming-container">
+        <iframe class="video-container" src="{{ live_path }}/{{ path }}" scrolling="no"></iframe>
+        <div class="chat-container"></div>
+    </div>
+{% endblock %}

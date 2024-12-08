@@ -1,0 +1,15 @@
+.streaming-container {
+    width: 100%;
+    height: auto;
+    display: grid;
+    grid-template-areas: "V V V C";
+}
+.chat-container {
+    grid-area: C;
+}
+.video-container {
+    grid-area: V;
+    aspect-ratio: 16 / 9;
+    width: 100%;
+    height: auto;
+}
