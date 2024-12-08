@@ -38,12 +38,12 @@ def index():
         data = r.json()
         if "items" in data:
             res = [x["name"] for x in data["items"]]
-            return render_template("index.html", paths=res, live_path=app.streams_redirect)
+            return render_template("index.html", paths=res)
     return {"error": f"MediaMTX API on {app.mtx_api_uri} not available"}
 
 @app.get("/<user>")
 def stream_watch(user):
-    return render_template("stream.html", path=user, live_path=app.live_host)
+    return render_template("stream.html", path=user, live_path=app.streams_redirect)
 
 @app.get("/msg/list")
 def msg_list():
