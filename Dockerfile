@@ -5,8 +5,8 @@ COPY requirements.txt requirements.txt
 RUN pip install -r requirements.txt
 RUN pip install gunicorn
 
-COPY static static
-COPY templates templates
+COPY app/static static
+COPY app/templates templates
 COPY app/app.py boot.sh ./
 RUN chmod a+x boot.sh
 
