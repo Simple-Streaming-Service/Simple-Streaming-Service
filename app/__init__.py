@@ -18,7 +18,3 @@ def create_app(config_class=Config):
         return '<h1>Testing the Flask Application Factory Pattern</h1>'
 
     return app
-
-
-app = Flask(__name__, static_folder='static', template_folder='templates')
-

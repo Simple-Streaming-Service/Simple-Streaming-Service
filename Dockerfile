@@ -8,6 +8,7 @@ RUN pip install gunicorn
 COPY ./app ./app
 COPY boot.sh ./
 COPY config.py ./
+COPY wsgi.py ./
 
 RUN chmod a+x boot.sh
 
