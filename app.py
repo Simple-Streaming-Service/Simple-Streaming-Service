@@ -4,6 +4,8 @@ from flask import Flask, session, send_file, render_template
 from flask import request, jsonify, redirect
 import requests
 
+from flask_mongoengine import MongoEngine
+
 app = Flask(__name__, static_folder='static', template_folder='templates')
 app.secret_key = os.getenv("SECRET_KEY", "secret")
 
@@ -49,10 +51,10 @@ def index():
 def stream_watch(user):
     return render_template("stream.html", path=user, live_path=app.streams_redirect)
 
-@app.get("/msg/list")
+@app.get("/<user>/msg/list")
 def msg_list():
     pass
-@app.post("/msg/send")
+@app.post("/<user>/msg/send")
 def msg_send():
     pass
 
