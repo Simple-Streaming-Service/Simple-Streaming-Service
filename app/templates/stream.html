@@ -18,7 +18,7 @@
                 </div>
             </div>
             <div class='chat-input'>
-                <form method='post' id='chat-form' onsubmit="send_request('{{ streamer }}', '{{ streamer }}'); return false;">
+                <form method='post' id='chat-form' onsubmit="send_request('{{ streamer }}'); return false;">
                     <input type='text' id='message-text' class='chat-form__input' placeholder='Введите сообщение'>
                     <input type='submit' class='chat-form__submit' value='=>'>
                 </form>

@@ -67,24 +67,30 @@ def msg_list(streamer):
         } for msg in sorted_messages[:limit]
     ]
 
+anonym = User.objects(username="Anonym").first()
+if not anonym:
+    anonym = User(username="Anonym", email="anonym@anonym.com", password="pass")
+    anonym.validate()
+    anonym.save()
+
 @bp.post("/<streamer>/chat/send")
 def msg_send(streamer):
     data = request.data
     data = json.loads(data)
-    if "user" not in data: return {"ok": False, "error": "User field is required!"}
-    user = User.objects(username=data["user"]).first()
+
+    user = anonym # TODO: Get user
     if not user: return {"ok": False, "error": "User does not exist!"}
 
     timestamp = request.args.get("timestamp", datetime.now().timestamp())
     timestamp = datetime.fromtimestamp(timestamp)
-    if "content" not in data: return {"ok": False, "error": "Content field is required!"}
+    if "message" not in data: return {"ok": False, "error": "Content field is required!"}
 
     streamer = User.objects(username=streamer).first()
     streamer = StreamingProfile.objects(user=streamer).first()
     if not streamer: return {"ok": False, "error": "Streamer does not exist!"}
 
     try:
-        msg = Message(user=user, content=data["content"], timestamp=timestamp)
+        msg = Message(user=user, content=data["message"], timestamp=timestamp)
         msg.validate()
         streamer.messages.append(msg)
         streamer.save()

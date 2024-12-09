@@ -5,8 +5,7 @@ function send_request(streamer, user) {
     fetch(`/${streamer}/chat/send`, {
         method: 'POST',
         body: JSON.stringify({
-            "user": user,
-            "content": message_text.value
+            "message": message_text.value
         })
     }).then(response => {
 
@@ -29,9 +28,11 @@ function update_chat(streamer) {
         }).catch(error => {
             // TODO: Error handling!
             alert(error);
+            setTimeout(update_chat, 10_000, streamer);
         })
     }).catch(error => {
         // TODO: Error handling!
         alert(error);
+        setTimeout(update_chat, 10_000, streamer);
     })
 }
