@@ -13,9 +13,8 @@
         {% for stream in streams %}
              <li class="stream_card">
                  <div class="card_container">
-                     <a>{{ stream.streamer }}</a>
+                     <a>{{ stream.streamer }} is now live!</a>
                      <h1>{{ stream.name }}</h1>
-                     <a>Is now live</a>
                  </div>
                 <a class="btn" href="/{{ stream.streamer }}">Watch live</a>
              </li>
