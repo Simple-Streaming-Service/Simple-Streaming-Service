@@ -5,15 +5,43 @@
 {% endblock %}
 
 {% block title %}
-    {{ username }} | {{ title }}
+    {{ streamer }} | {{ title }}
 {% endblock %}
 
 {% block content %}
     <div class="streaming-container">
         <iframe class="video-container" src="{{ live_path }}/{{ path }}" scrolling="no"></iframe>
         <div class="chat-container">
-            <script type="module" src="{{ url_for('static', filename='js/chat.css') }}"></script>
             <div id="chat"></div>
+            <script>
+                function update_chat() {
+                    const chat_root = document.getElementById('chat');
+                    fetch(`/{{ streamer }}/chat/list?timestamp=${Math.trunc(Date.now() / 1000)}&limit=50`, {
+                        method: 'GET'
+                    }).then(response => {
+                        response.json().then(chat => {
+                            chat_root.innerHTML = '';
+                            chat.forEach(message => {
+                                const div = document.createElement("div");
+                                div.className = "chat-msg";
+                                div.innerHTML = `
+                                        <h3 class="chat-username">${message.user}</h3>
+                                        <p class="chat-message">${message.content}</p>
+                                `;
+                                chat_root.append(div);
+                            })
+                            setTimeout(update_chat, 10)
+                        }).catch(error => {
+                            // TODO: Error handling!
+                            console.error(error);
+                        })
+                    }).catch(error => {
+                        // TODO: Error handling!
+                        console.error(error);
+                    })
+                }
+                update_chat();
+            </script>
         </div>
     </div>
 {% endblock %}

@@ -12,7 +12,11 @@ from app.models.messaging import Message
 @bp.get("/<streamer>")
 def stream_watch(streamer):
     config = current_app.config
-    return render_template("stream.html", path=streamer, live_path=config["STREAMS_REDIRECT"])
+    return render_template(
+        "stream.html",
+        streamer=streamer,
+        path=streamer,
+        live_path=config["STREAMS_REDIRECT"])
 
 @bp.post("/<streamer>/create")
 def create(streamer):
