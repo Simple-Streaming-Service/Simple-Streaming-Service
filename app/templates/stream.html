@@ -10,38 +10,21 @@
 
 {% block content %}
     <div class="streaming-container">
-        <iframe class="video-container" src="{{ live_path }}/{{ path }}" scrolling="no"></iframe>
-        <div class="chat-container">
-            <div id="chat"></div>
-            <script>
-                function update_chat() {
-                    const chat_root = document.getElementById('chat');
-                    fetch(`/{{ streamer }}/chat/list?timestamp=${Math.trunc(Date.now() / 1000)}&limit=50`, {
-                        method: 'GET'
-                    }).then(response => {
-                        response.json().then(chat => {
-                            chat_root.innerHTML = '';
-                            chat.forEach(message => {
-                                const div = document.createElement("div");
-                                div.className = "chat-msg";
-                                div.innerHTML = `
-                                        <h3 class="chat-username">${message.user}</h3>
-                                        <p class="chat-message">${message.content}</p>
-                                `;
-                                chat_root.append(div);
-                            })
-                            setTimeout(update_chat, 10)
-                        }).catch(error => {
-                            // TODO: Error handling!
-                            console.error(error);
-                        })
-                    }).catch(error => {
-                        // TODO: Error handling!
-                        console.error(error);
-                    })
-                }
-                update_chat();
-            </script>
+        <iframe class="video-container" src="{{ live_path }}/{{ path }}" scrolling="no" allowfullscreen></iframe>
+        <div class='chat'>
+            <div class='chat-messages'>
+                <div class='chat-messages__content' id='messages'>
+                    Загрузка...
+                </div>
+            </div>
+            <div class='chat-input'>
+                <form method='post' id='chat-form' onsubmit="send_request('{{ streamer }}', '{{ streamer }}'); return false;">
+                    <input type='text' id='message-text' class='chat-form__input' placeholder='Введите сообщение'>
+                    <input type='submit' class='chat-form__submit' value='=>'>
+                </form>
+            </div>
+            <script src="{{ url_for('static', filename='js/chat.js') }}"
+                    onload="update_chat('{{ streamer }}')"></script>
         </div>
     </div>
 {% endblock %}

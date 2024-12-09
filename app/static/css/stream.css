@@ -1,15 +1,52 @@
+@import url("colors.css");
+
 .streaming-container {
     width: 100%;
     height: auto;
     display: grid;
-    grid-template-areas: "V V V C";
-}
-.chat-container {
-    grid-area: C;
+    grid-template-columns: 80% 20%;
 }
 .video-container {
-    grid-area: V;
     aspect-ratio: 16 / 9;
     width: 100%;
     height: auto;
+}
+
+.chat-messages {
+	min-height:93%;
+	max-height:93%;
+	overflow:auto;
+}
+
+.chat-messages__content {
+	padding:1px;
+}
+
+.chat__message {
+	border-left:3px solid #333;
+	margin-top:2px;
+	padding:2px;
+}
+
+.chat-input {
+	min-height:6%;
+}
+input {
+    font-family: arial, serif;
+	font-size:16px;
+	vertical-align:middle;
+	background:#333;
+	color:#fff;
+	border:0;
+	display:inline-block;
+	margin:1px;
+	height:30px;
+}
+
+.chat-form__input {
+	width:79%;
+}
+
+.chat-form__submit {
+	width:18%;
 }
