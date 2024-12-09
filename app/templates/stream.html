@@ -11,6 +11,9 @@
 {% block content %}
     <div class="streaming-container">
         <iframe class="video-container" src="{{ live_path }}/{{ path }}" scrolling="no"></iframe>
-        <div class="chat-container"></div>
+        <div class="chat-container">
+            <script type="module" src="{{ url_for('static', filename='js/chat.css') }}"></script>
+            <div id="chat"></div>
+        </div>
     </div>
 {% endblock %}
