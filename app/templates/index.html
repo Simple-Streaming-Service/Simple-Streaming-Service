@@ -6,18 +6,18 @@
 
 {% block content %}
     <div class="container">
-    {% if paths == [] %}
+    {% if streams == [] %}
         <h1 class="nostreams">No live streams available</h1>
     {% else %}
          <ul class="streams">
-        {% for path in paths %}
+        {% for stream in streams %}
              <li class="stream_card">
                  <div class="card_container">
-                     <a>Topic</a>
-                     <h1>{{ path }}</h1>
+                     <a>{{ stream.streamer }}</a>
+                     <h1>{{ stream.name }}</h1>
                      <a>Is now live</a>
                  </div>
-                <a class="btn" href="/{{ path }}">Watch live</a>
+                <a class="btn" href="/{{ stream.streamer }}">Watch live</a>
              </li>
         {% endfor %}
          </ul>
