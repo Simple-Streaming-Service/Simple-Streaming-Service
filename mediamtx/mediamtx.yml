@@ -234,7 +234,7 @@ playbackTrustedProxies: []
 # Global settings -> RTSP server
 
 # Enable publishing and reading streams with the RTSP protocol.
-rtsp: yes
+rtsp: no
 # List of enabled RTSP transport protocols.
 # UDP is the most performant, but doesn't work when there's a NAT/firewall between
 # server and clients, and doesn't support encryption.
@@ -279,7 +279,7 @@ rtmp: yes
 rtmpAddress: :1935
 # Encrypt connections with TLS (RTMPS).
 # Available values are "no", "strict", "optional".
-rtmpEncryption: "optional"
+rtmpEncryption: "no"
 # Address of the RTMPS listener. This is needed only when encryption is "strict" or "optional".
 rtmpsAddress: :1936
 # Path to the server key. This is needed only when encryption is "strict" or "optional".
@@ -299,7 +299,7 @@ hls: yes
 hlsAddress: :8888
 # Enable TLS/HTTPS on the HLS server.
 # This is required for Low-Latency HLS.
-hlsEncryption: yes
+hlsEncryption: no
 # Path to the server key. This is needed only when encryption is yes.
 # This can be generated with:
 # openssl genrsa -out server.key 2048
