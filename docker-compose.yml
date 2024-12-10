@@ -38,6 +38,7 @@ services:
             - mediamtx
         volumes:
             - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+            - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
             - ./server.key:/server.key:ro
             - ./server.crt:/server.crt:ro
         network_mode: host
