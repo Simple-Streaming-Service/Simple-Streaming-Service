@@ -17,6 +17,7 @@ services:
     flask-video-app:
         depends_on:
             - mongo
+        restart: always
         environment:
             MTX_API_HOST: ${MTX_API_HOST}
             MTX_API_HOST_PORT: ${MTX_API_HOST_PORT}
@@ -37,8 +38,8 @@ services:
             - flask-video-app
             - mediamtx
         volumes:
-            - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
-            - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+            - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:rw
+            - ./nginx/nginx.conf:/etc/nginx/nginx.conf:rw
             - ./server.key:/server.key:ro
             - ./server.crt:/server.crt:ro
         network_mode: host
