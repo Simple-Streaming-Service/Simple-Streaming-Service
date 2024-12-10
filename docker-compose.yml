@@ -3,6 +3,7 @@ services:
         image: mongo
         restart: always
         environment:
+            MONGO_INITDB_DATABASE: ${MONGO_DB_NAME}
             MONGO_INITDB_ROOT_USERNAME: ${MONGO_USERNAME}
             MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
         network_mode: host
@@ -18,12 +19,15 @@ services:
             - mongo
         environment:
             MTX_API_HOST: ${MTX_API_HOST}
+            MTX_API_HOST_PORT: ${MTX_API_HOST_PORT}
             MTX_LIVE_HOST: ${MTX_LIVE_HOST}
+            MTX_LIVE_HOST_PORT: ${MTX_LIVE_HOST_PORT}
             MONGO_HOST: ${MONGO_HOST}
             MONGO_PORT: ${MONGO_PORT}
             SECRET_KEY: ${SECRET_KEY}
             MONGO_USERNAME: ${MONGO_USERNAME}
             MONGO_PASSWORD: ${MONGO_PASSWORD}
+            MONGO_DB_NAME: ${MONGO_DB_NAME}
         build: .
         command: ./boot.sh
         network_mode: host

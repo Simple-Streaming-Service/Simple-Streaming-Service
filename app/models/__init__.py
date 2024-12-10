@@ -1,1 +1,2 @@
-from app.models import models
+from app.models import account
+from app.models import messaging
