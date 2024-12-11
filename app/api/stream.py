@@ -23,7 +23,7 @@ def is_subscribed(streamer):
     return {"ok": True, "subscribed": get_user(request.args) in streamer.subscribers}
 
 @bp.get("/<streamer>/subscribers/count")
-def sub_count(streamer):
+def subscribers_count(streamer):
     streamer = find_streamer(streamer)
     if not streamer: return {"ok": False, "error": "Streamer does not exist!"}
     return {"ok": True, "count": len(streamer.subscribers)}
@@ -32,22 +32,34 @@ def sub_count(streamer):
 def subscribe(streamer):
     streamer = find_streamer(streamer)
     if not streamer: return {"ok": False, "error": "Streamer does not exist!"}
-    streamer.subscribers.append(get_current_user(request.args))
+    user = get_current_user(request.args)
+
+    user.subscriptions.append(streamer)
+    user.subscriptions = list(set(user.subscriptions))
+    user.save()
+
+    streamer.subscribers.append(user)
     streamer.subscribers = list(set(streamer.subscribers))
     streamer.save()
+
     return {"ok": True, "msg": "Subscribed!"}
 
 @bp.post("/<streamer>/subscribers/unsubscribe")
 def unsubscribe(streamer):
     streamer = find_streamer(streamer)
     if not streamer: return {"ok": False, "error": "Streamer does not exist!"}
-    streamer.subscribers.remove(get_current_user(request.args))
+    user = get_current_user(request.args)
+
+    user.subscriptions.remove(streamer)
+    user.save()
+
+    streamer.subscribers.remove(user)
     streamer.save()
     return {"ok": True, "msg": "Unsubscribed!"}
 
 
 @bp.get("/<streamer>/viewers/connect")
-def view_count(streamer):
+def view_connect(streamer):
     streamer = find_streamer(streamer)
     if not streamer: return {"ok": False, "error": "Streamer does not exist!"}
     streamer.viewers.append(get_current_user(request.args))
@@ -56,7 +68,7 @@ def view_count(streamer):
     return {"ok": True, "msg": "Connected!"}
 
 @bp.get("/<streamer>/viewers/disconnect")
-def view_count(streamer):
+def view_disconnect(streamer):
     streamer = find_streamer(streamer)
     if not streamer: return {"ok": False, "error": "Streamer does not exist!"}
     streamer.viewers.remove(get_current_user(request.args))

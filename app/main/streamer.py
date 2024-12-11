@@ -3,6 +3,8 @@
 from app.main import bp
 from flask import render_template, current_app
 
+from app.services.user import is_authenticated
+
 
 @bp.get("/<streamer>")
 def stream_watch(streamer):
@@ -12,4 +14,5 @@ def stream_watch(streamer):
         streamer=streamer,
         path=streamer,
         live_path=config["STREAMS_REDIRECT"],
-        configurator="")
+        configurator="",
+        authenticated=is_authenticated())

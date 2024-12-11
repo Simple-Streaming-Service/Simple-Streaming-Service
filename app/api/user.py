@@ -93,3 +93,12 @@ def update_profile__stream_name():
     except ValidationError as e:
         return {"ok": False, "error": "Stream name change error!", "exception": str(e)}
     return {"ok": True, "msg": "Stream name changed successfully!"}
+
+
+@bp.get("/subscriptions")
+def sub_count():
+    user = get_current_user(request.args)
+    return {
+        "ok": True,
+        "subscriptions": [ subscription.user.username for subscription in user.subscriptions ]
+    }
