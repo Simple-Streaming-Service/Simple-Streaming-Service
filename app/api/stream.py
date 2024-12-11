@@ -18,35 +18,56 @@ if not anonym:
 
 @bp.get("/<streamer>/subscribers/contains")
 def is_subscribed(streamer):
-    streamer = User.objects(username=streamer).first()
-    streamer = StreamingProfile.objects(user=streamer).first()
+    streamer = find_streamer(streamer)
     if not streamer: return {"ok": False, "error": "Streamer does not exist!"}
-    return {"ok": True, "subscribed": get_user(request.args) not in streamer.subscribers}
+    return {"ok": True, "subscribed": get_user(request.args) in streamer.subscribers}
 
 @bp.get("/<streamer>/subscribers/count")
-def sub_list(streamer):
-    streamer = User.objects(username=streamer).first()
-    streamer = StreamingProfile.objects(user=streamer).first()
+def sub_count(streamer):
+    streamer = find_streamer(streamer)
     if not streamer: return {"ok": False, "error": "Streamer does not exist!"}
     return {"ok": True, "count": len(streamer.subscribers)}
 
 @bp.post("/<streamer>/subscribers/subscribe")
 def subscribe(streamer):
-    streamer = User.objects(username=streamer).first()
-    streamer = StreamingProfile.objects(user=streamer).first()
+    streamer = find_streamer(streamer)
     if not streamer: return {"ok": False, "error": "Streamer does not exist!"}
     streamer.subscribers.append(get_current_user(request.args))
+    streamer.subscribers = list(set(streamer.subscribers))
     streamer.save()
     return {"ok": True, "msg": "Subscribed!"}
 
 @bp.post("/<streamer>/subscribers/unsubscribe")
 def unsubscribe(streamer):
-    streamer = User.objects(username=streamer).first()
-    streamer = StreamingProfile.objects(user=streamer).first()
+    streamer = find_streamer(streamer)
     if not streamer: return {"ok": False, "error": "Streamer does not exist!"}
     streamer.subscribers.remove(get_current_user(request.args))
     streamer.save()
     return {"ok": True, "msg": "Unsubscribed!"}
+
+
+@bp.get("/<streamer>/viewers/connect")
+def view_count(streamer):
+    streamer = find_streamer(streamer)
+    if not streamer: return {"ok": False, "error": "Streamer does not exist!"}
+    streamer.viewers.append(get_current_user(request.args))
+    streamer.viewers = list(set(streamer.viewers))
+    streamer.save()
+    return {"ok": True, "msg": "Connected!"}
+
+@bp.get("/<streamer>/viewers/disconnect")
+def view_count(streamer):
+    streamer = find_streamer(streamer)
+    if not streamer: return {"ok": False, "error": "Streamer does not exist!"}
+    streamer.viewers.remove(get_current_user(request.args))
+    streamer.save()
+    return {"ok": True, "msg": "Disconnected!"}
+
+@bp.get("/<streamer>/viewers/count")
+def view_count(streamer):
+    streamer = find_streamer(streamer)
+    if not streamer: return {"ok": False, "error": "Streamer does not exist!"}
+    return {"ok": True, "count": len(streamer.viewers)}
 
 
 @bp.get("/<streamer>/chat/list")
@@ -56,8 +77,7 @@ def msg_list(streamer):
     timestamp = int(request.args.get("timestamp", datetime.now().timestamp()))
     timestamp = datetime.fromtimestamp(timestamp)
 
-    streamer = User.objects(username=streamer).first()
-    streamer = StreamingProfile.objects(user=streamer).first()
+    streamer = find_streamer(streamer)
     if not streamer: return {"ok": False, "error": "Streamer does not exist!"}
 
     filtered_messages = [msg for msg in streamer.messages if msg.timestamp <= timestamp]
@@ -85,8 +105,7 @@ def msg_send(streamer):
     timestamp = datetime.fromtimestamp(timestamp)
     if "message" not in data: return {"ok": False, "error": "Content field is required!"}
 
-    streamer = User.objects(username=streamer).first()
-    streamer = StreamingProfile.objects(user=streamer).first()
+    streamer = find_streamer(streamer)
     if not streamer: return {"ok": False, "error": "Streamer does not exist!"}
 
     try:
@@ -97,3 +116,7 @@ def msg_send(streamer):
     except ValidationError as e:
         return {"ok": False, "error": "Message sent error!", "exception": str(e)}
     return {"ok": True, "msg": "Message sent!", "timestamp": timestamp}
+
+def find_streamer(streamer):
+    streamer = User.objects(username=streamer).first()
+    return StreamingProfile.objects(user=streamer).first()

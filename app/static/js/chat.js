@@ -10,8 +10,10 @@ function send_request(streamer, user) {
             "message": message_text.value
         })
     }).then(response => {
-
-    })
+        response.json().then(chat => {
+            if (!chat.ok) handleError(chat.error);
+        }).catch(handleError)
+    }).catch(handleError)
 }
 
 function update_chat(streamer, configurator) {
@@ -19,25 +21,26 @@ function update_chat(streamer, configurator) {
         method: 'GET'
     }).then(response => {
         response.json().then(chat => {
-            const md = markdownIt();
-            configurator(md)
-            md.use();
-            chat_root.innerHTML = '';
-            chat.forEach(message => {
-                const div = document.createElement("p");
-                div.className = "chat__message";
-                div.innerText = `${message.user}: ${md.render(markdownIt. message.content)}`;
-                chat_root.append(div);
-            })
-            setTimeout(update_chat, 10, streamer);
-        }).catch(error => {
-            // TODO: Error handling!
-            alert(error);
-            setTimeout(update_chat, 10_000, streamer);
-        })
-    }).catch(error => {
-        // TODO: Error handling!
-        alert(error);
-        setTimeout(update_chat, 10_000, streamer);
-    })
+            if (chat.ok) {
+                 const md = markdownIt();
+                configurator(md)
+                md.use();
+                chat_root.innerHTML = '';
+                chat.messages.forEach(message => {
+                    const div = document.createElement("p");
+                    div.className = "chat__message";
+                    div.innerText = `${message.user}: ${md.render(markdownIt. message.content)}`;
+                    chat_root.append(div);
+                })
+                setTimeout(update_chat, 100, streamer);
+            }
+            else handleError(chat.error);
+        }).catch(handleError)
+    }).catch(handleError)
+}
+
+function handleError(error) {
+    // TODO: Error handling!
+    alert(error);
+    setTimeout(update_chat, 10_000, streamer);
 }
