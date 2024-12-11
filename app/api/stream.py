@@ -7,6 +7,46 @@ from mongoengine import ValidationError
 from app.api import bp
 from app.models.account import User, StreamingProfile
 from app.models.messaging import Message
+from app.services.user import get_current_user, get_user
+
+anonym = User.objects(username="Anonym").first()
+if not anonym:
+    anonym = User(username="Anonym", email="anonym@anonym.com", password="pass")
+    anonym.validate()
+    anonym.save()
+
+
+@bp.get("/<streamer>/subscribers/contains")
+def is_subscribed(streamer):
+    streamer = User.objects(username=streamer).first()
+    streamer = StreamingProfile.objects(user=streamer).first()
+    if not streamer: return {"ok": False, "error": "Streamer does not exist!"}
+    return {"ok": True, "subscribed": get_user(request.args) not in streamer.subscribers}
+
+@bp.get("/<streamer>/subscribers/count")
+def sub_list(streamer):
+    streamer = User.objects(username=streamer).first()
+    streamer = StreamingProfile.objects(user=streamer).first()
+    if not streamer: return {"ok": False, "error": "Streamer does not exist!"}
+    return {"ok": True, "count": len(streamer.subscribers)}
+
+@bp.post("/<streamer>/subscribers/subscribe")
+def subscribe(streamer):
+    streamer = User.objects(username=streamer).first()
+    streamer = StreamingProfile.objects(user=streamer).first()
+    if not streamer: return {"ok": False, "error": "Streamer does not exist!"}
+    streamer.subscribers.append(get_current_user(request.args))
+    streamer.save()
+    return {"ok": True, "msg": "Subscribed!"}
+
+@bp.post("/<streamer>/subscribers/unsubscribe")
+def unsubscribe(streamer):
+    streamer = User.objects(username=streamer).first()
+    streamer = StreamingProfile.objects(user=streamer).first()
+    if not streamer: return {"ok": False, "error": "Streamer does not exist!"}
+    streamer.subscribers.remove(get_current_user(request.args))
+    streamer.save()
+    return {"ok": True, "msg": "Unsubscribed!"}
 
 
 @bp.get("/<streamer>/chat/list")
@@ -22,26 +62,23 @@ def msg_list(streamer):
 
     filtered_messages = [msg for msg in streamer.messages if msg.timestamp <= timestamp]
     sorted_messages = sorted(filtered_messages, key=lambda x: x.timestamp, reverse=True)
-    return [
-        {
-            "user": msg.user.username,
-            "content": msg.content,
-            "timestamp": msg.timestamp
-        } for msg in sorted_messages[:limit]
-    ]
-
-anonym = User.objects(username="Anonym").first()
-if not anonym:
-    anonym = User(username="Anonym", email="anonym@anonym.com", password="pass")
-    anonym.validate()
-    anonym.save()
+    return {
+        "ok": True,
+        "messages": [
+            {
+                "user": msg.user.username,
+                "content": msg.content,
+                "timestamp": msg.timestamp
+            } for msg in sorted_messages[:limit]
+        ]
+    }
 
 @bp.post("/<streamer>/chat/send")
 def msg_send(streamer):
     data = request.data
     data = json.loads(data)
 
-    user = anonym # TODO: Get user
+    user = get_current_user(data)
     if not user: return {"ok": False, "error": "User does not exist!"}
 
     timestamp = request.args.get("timestamp", datetime.now().timestamp())

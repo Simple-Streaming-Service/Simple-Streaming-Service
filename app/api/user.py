@@ -1,10 +1,11 @@
 import hashlib
 
-from flask import request, json
+from flask import request, json, current_app
 from mongoengine import ValidationError
 
 from app.api import bp
 from app.models.account import User, StreamingProfile
+from app.services.user import get_current_user
 
 
 @bp.post("/create/user")
@@ -24,7 +25,7 @@ def create_user():
 @bp.patch("/update/user/password")
 def update_user_password():
     data = json.loads(request.data)
-    user = get_user(data)
+    user = get_current_user(data)
     if not user: return {"ok": False, "error": "User does not exist!"}
     try:
         if user.password != hashlib.sha512(data["old_password"].encode()).hexdigest():
@@ -39,7 +40,7 @@ def update_user_password():
 @bp.patch("/update/user/username")
 def update_user_username():
     data = json.loads(request.data)
-    user = get_user(data)
+    user = get_current_user(data)
     if not user: return {"ok": False, "error": "User does not exist!"}
     try:
         user.username = data["username"]
@@ -52,7 +53,7 @@ def update_user_username():
 @bp.patch("/update/user/email")
 def update_user_email():
     data = json.loads(request.data)
-    user = get_user(data)
+    user = get_current_user(data)
     if not user: return {"ok": False, "error": "User does not exist!"}
     try:
         user.email = data["email"]
@@ -67,7 +68,7 @@ def update_user_email():
 def create_profile():
     data = json.loads(request.data)
     try:
-        user = get_user(data)
+        user = get_current_user(data)
         if not user: return {"ok": False, "error": "User does not exist!"}
         if "stream_name" not in data:
             return {"ok": False, "error": "Stream without name!"}
@@ -84,7 +85,7 @@ def create_profile():
 def update_profile__stream_name():
     data = json.loads(request.data)
     try:
-        user = get_user(data)
+        user = get_current_user(data)
         if not user: return {"ok": False, "error": "User does not exist!"}
         if "stream_name" not in data:
             return {"ok": False, "error": "Stream without name!"}
@@ -92,7 +93,3 @@ def update_profile__stream_name():
     except ValidationError as e:
         return {"ok": False, "error": "Stream name change error!", "exception": str(e)}
     return {"ok": True, "msg": "Stream name changed successfully!"}
-
-def get_user(args):
-    if "user" not in args: return None
-    return User.objects(username=args["user"]).first()
