@@ -26,7 +26,7 @@
                 {% endif %}
             </div>
             <script type="module" src="{{ url_for('static', filename='js/chat.js') }}"
-                    onload="update_chat('{{ streamer }}', (md) => { {{ configurator }} })"></script>
+                    onload="init_chat((md) => { {{ chat_initializer }} }); update_chat('{{ streamer }}')"></script>
         </div>
     </div>
 {% endblock %}

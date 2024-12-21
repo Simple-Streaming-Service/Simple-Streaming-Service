@@ -16,19 +16,19 @@ if not anonym:
     anonym.save()
 
 
-@bp.get("/<streamer>/subscribers/contains")
+@bp.get("/stream/<streamer>/subscribers/contains")
 def is_subscribed(streamer):
     streamer = find_streamer(streamer)
     if not streamer: return {"ok": False, "error": "Streamer does not exist!"}
     return {"ok": True, "subscribed": get_user(request.args) in streamer.subscribers}
 
-@bp.get("/<streamer>/subscribers/count")
+@bp.get("/stream/<streamer>/subscribers/count")
 def subscribers_count(streamer):
     streamer = find_streamer(streamer)
     if not streamer: return {"ok": False, "error": "Streamer does not exist!"}
     return {"ok": True, "count": len(streamer.subscribers)}
 
-@bp.post("/<streamer>/subscribers/subscribe")
+@bp.post("/stream/<streamer>/subscribers/subscribe")
 def subscribe(streamer):
     streamer = find_streamer(streamer)
     if not streamer: return {"ok": False, "error": "Streamer does not exist!"}
@@ -44,7 +44,7 @@ def subscribe(streamer):
 
     return {"ok": True, "msg": "Subscribed!"}
 
-@bp.post("/<streamer>/subscribers/unsubscribe")
+@bp.post("/stream/<streamer>/subscribers/unsubscribe")
 def unsubscribe(streamer):
     streamer = find_streamer(streamer)
     if not streamer: return {"ok": False, "error": "Streamer does not exist!"}
@@ -58,7 +58,7 @@ def unsubscribe(streamer):
     return {"ok": True, "msg": "Unsubscribed!"}
 
 
-@bp.get("/<streamer>/viewers/connect")
+@bp.get("/stream/<streamer>/viewers/connect")
 def view_connect(streamer):
     streamer = find_streamer(streamer)
     if not streamer: return {"ok": False, "error": "Streamer does not exist!"}
@@ -67,7 +67,7 @@ def view_connect(streamer):
     streamer.save()
     return {"ok": True, "msg": "Connected!"}
 
-@bp.get("/<streamer>/viewers/disconnect")
+@bp.get("/stream/<streamer>/viewers/disconnect")
 def view_disconnect(streamer):
     streamer = find_streamer(streamer)
     if not streamer: return {"ok": False, "error": "Streamer does not exist!"}
@@ -75,14 +75,14 @@ def view_disconnect(streamer):
     streamer.save()
     return {"ok": True, "msg": "Disconnected!"}
 
-@bp.get("/<streamer>/viewers/count")
+@bp.get("/stream/<streamer>/viewers/count")
 def view_count(streamer):
     streamer = find_streamer(streamer)
     if not streamer: return {"ok": False, "error": "Streamer does not exist!"}
     return {"ok": True, "count": len(streamer.viewers)}
 
 
-@bp.get("/<streamer>/chat/list")
+@bp.get("/stream/<streamer>/chat/list")
 def msg_list(streamer):
     limit = int(request.args.get("limit", 10))
 
@@ -105,7 +105,7 @@ def msg_list(streamer):
         ]
     }
 
-@bp.post("/<streamer>/chat/send")
+@bp.post("/stream/<streamer>/chat/send")
 def msg_send(streamer):
     data = request.data
     data = json.loads(data)
@@ -131,4 +131,5 @@ def msg_send(streamer):
 
 def find_streamer(streamer):
     streamer = User.objects(username=streamer).first()
-    return StreamingProfile.objects(user=streamer).first()
+    streamer = StreamingProfile.objects(user=streamer).first()
+    return streamer

@@ -3,16 +3,21 @@
 from app.main import bp
 from flask import render_template, current_app
 
+from app.models.account import User, StreamingProfile
 from app.services.user import is_authenticated
 
 
 @bp.get("/<streamer>")
 def stream_watch(streamer):
+    streamer = User.objects(username=streamer).first()
+    streamer = StreamingProfile.objects(user=streamer).first()
+    if not streamer: return {"ok": False, "error": "Streamer does not exist!"}
     config = current_app.config
     return render_template(
         "stream.html",
-        streamer=streamer,
-        path=streamer,
+        streamer=streamer.user.username,
+        path=streamer.user.username,
         live_path=config["STREAMS_REDIRECT"],
-        configurator="",
+        chat_initializer=str.join("\n", [service.initializer_code for service in streamer.services]),
+        chat_converter=str.join("\n", [service.converter_code for service in streamer.services]),
         authenticated=is_authenticated())
