@@ -16,6 +16,7 @@ from app.models.service import FrontendChatService
 
 class StreamingProfile(Document):
     user = ReferenceField(document_type=User, unique=True)
+    token = StringField(required=True, unique=True)
 
     # Settings
     stream_name = StringField(required=True)

@@ -9,11 +9,6 @@ from app.models.account import User, StreamingProfile
 from app.models.messaging import Message
 from app.services.user import get_current_user, get_user
 
-anonym = User.objects(username="Anonym").first()
-if not anonym:
-    anonym = User(username="Anonym", email="anonym@anonym.com", password="pass")
-    anonym.validate()
-    anonym.save()
 
 
 @bp.get("/stream/<streamer>/subscribers/contains")
@@ -32,7 +27,7 @@ def subscribers_count(streamer):
 def subscribe(streamer):
     streamer = find_streamer(streamer)
     if not streamer: return {"ok": False, "error": "Streamer does not exist!"}
-    user = get_current_user(request.args)
+    user = get_current_user()
 
     user.subscriptions.append(streamer)
     user.subscriptions = list(set(user.subscriptions))
@@ -48,7 +43,7 @@ def subscribe(streamer):
 def unsubscribe(streamer):
     streamer = find_streamer(streamer)
     if not streamer: return {"ok": False, "error": "Streamer does not exist!"}
-    user = get_current_user(request.args)
+    user = get_current_user()
 
     user.subscriptions.remove(streamer)
     user.save()
@@ -62,7 +57,7 @@ def unsubscribe(streamer):
 def view_connect(streamer):
     streamer = find_streamer(streamer)
     if not streamer: return {"ok": False, "error": "Streamer does not exist!"}
-    streamer.viewers.append(get_current_user(request.args))
+    streamer.viewers.append(get_current_user())
     streamer.viewers = list(set(streamer.viewers))
     streamer.save()
     return {"ok": True, "msg": "Connected!"}
@@ -71,7 +66,7 @@ def view_connect(streamer):
 def view_disconnect(streamer):
     streamer = find_streamer(streamer)
     if not streamer: return {"ok": False, "error": "Streamer does not exist!"}
-    streamer.viewers.remove(get_current_user(request.args))
+    streamer.viewers.remove(get_current_user())
     streamer.save()
     return {"ok": True, "msg": "Disconnected!"}
 
@@ -109,8 +104,7 @@ def msg_list(streamer):
 def msg_send(streamer):
     data = request.data
     data = json.loads(data)
-
-    user = get_current_user(data)
+    user = get_current_user()
     if not user: return {"ok": False, "error": "User does not exist!"}
 
     timestamp = request.args.get("timestamp", datetime.now().timestamp())

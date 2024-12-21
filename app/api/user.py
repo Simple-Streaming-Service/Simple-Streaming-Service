@@ -25,7 +25,7 @@ def create_user():
 @bp.patch("/update/user/password")
 def update_user_password():
     data = json.loads(request.data)
-    user = get_current_user(data)
+    user = get_current_user()
     if not user: return {"ok": False, "error": "User does not exist!"}
     try:
         if user.password != hashlib.sha512(data["old_password"].encode()).hexdigest():
@@ -40,7 +40,7 @@ def update_user_password():
 @bp.patch("/update/user/username")
 def update_user_username():
     data = json.loads(request.data)
-    user = get_current_user(data)
+    user = get_current_user()
     if not user: return {"ok": False, "error": "User does not exist!"}
     try:
         user.username = data["username"]
@@ -53,7 +53,7 @@ def update_user_username():
 @bp.patch("/update/user/email")
 def update_user_email():
     data = json.loads(request.data)
-    user = get_current_user(data)
+    user = get_current_user()
     if not user: return {"ok": False, "error": "User does not exist!"}
     try:
         user.email = data["email"]
@@ -68,7 +68,7 @@ def update_user_email():
 def create_profile():
     data = json.loads(request.data)
     try:
-        user = get_current_user(data)
+        user = get_current_user()
         if not user: return {"ok": False, "error": "User does not exist!"}
         if "stream_name" not in data:
             return {"ok": False, "error": "Stream without name!"}
@@ -85,7 +85,7 @@ def create_profile():
 def update_profile_stream_name():
     data = json.loads(request.data)
     try:
-        user = get_current_user(data)
+        user = get_current_user()
         if not user: return {"ok": False, "error": "User does not exist!"}
         if "stream_name" not in data:
             return {"ok": False, "error": "Stream without name!"}
@@ -100,7 +100,7 @@ def update_profile_stream_name():
 def profile_services_list():
     data = json.loads(request.data)
     try:
-        user = get_current_user(data)
+        user = get_current_user()
         if not user: return {"ok": False, "error": "User does not exist!"}
         if "stream_name" not in data:
             return {"ok": False, "error": "Stream without name!"}
@@ -114,7 +114,7 @@ def profile_services_list():
 def add_profile_services():
     data = json.loads(request.data)
     try:
-        user = get_current_user(data)
+        user = get_current_user()
         if not user: return {"ok": False, "error": "User does not exist!"}
         if "stream_name" not in data:
             return {"ok": False, "error": "Stream without name!"}
@@ -132,7 +132,7 @@ def add_profile_services():
 def remove_profile_services():
     data = json.loads(request.data)
     try:
-        user = get_current_user(data)
+        user = get_current_user()
         if not user: return {"ok": False, "error": "User does not exist!"}
         if "stream_name" not in data:
             return {"ok": False, "error": "Stream without name!"}
@@ -149,7 +149,7 @@ def remove_profile_services():
 
 @bp.get("/subscriptions")
 def sub_count():
-    user = get_current_user(request.args)
+    user = get_current_user()
     return {
         "ok": True,
         "subscriptions": [ subscription.user.username for subscription in user.subscriptions ]
