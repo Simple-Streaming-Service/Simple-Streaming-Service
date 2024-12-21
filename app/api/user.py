@@ -1,6 +1,6 @@
 import hashlib
 
-from flask import request, json
+from flask import request, json, session
 
 from app.api import bp
 from app.models.account import User, StreamingProfile
@@ -154,3 +154,15 @@ def sub_count():
         "ok": True,
         "subscriptions": [ subscription.user.username for subscription in user.subscriptions ]
     }
+
+@bp.post("/auth")
+def auth():
+    data = json.loads(request.data)
+    user = User.objects(username=data["user"]).first()
+    if not user:
+        user = User.objects(email=data["user"]).first()
+    if not user: return {"ok": False, "error": "User does not exist!"}
+
+    if user.password != hashlib.sha512(data["password"].encode()).hexdigest():
+        return {"ok": False, "error": "Invalid password!"}
+    session['user_id'] = user.id
