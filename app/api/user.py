@@ -8,7 +8,7 @@ from app.models.service import FrontendChatService
 from app.services.user import get_current_user
 
 
-@bp.post("/create/user")
+@bp.post("/user/create")
 def create_user():
     data = json.loads(request.data)
     try:
@@ -22,11 +22,11 @@ def create_user():
         return {"ok": False, "error": "Registration error!", "exception": str(e)}
     return {"ok": True, "msg": "User created successfully!"}
 
-@bp.patch("/update/user/password")
+@bp.patch("/user/update/password")
 def update_user_password():
     data = json.loads(request.data)
     user = get_current_user()
-    if not user: return {"ok": False, "error": "User does not exist!"}
+    if not user: return {"ok": False, "error": "User not authorized!"}
     try:
         if user.password != hashlib.sha512(data["old_password"].encode()).hexdigest():
             return {"ok": False, "error": "Invalid old password!"}
@@ -37,11 +37,11 @@ def update_user_password():
         return {"ok": False, "error": "User password changing error!", "exception": str(e)}
     return {"ok": True, "msg": "User password changed successfully!"}
 
-@bp.patch("/update/user/username")
+@bp.patch("/user/update/username")
 def update_user_username():
     data = json.loads(request.data)
     user = get_current_user()
-    if not user: return {"ok": False, "error": "User does not exist!"}
+    if not user: return {"ok": False, "error": "User not authorized!"}
     try:
         user.username = data["username"]
         user.validate()
@@ -50,11 +50,11 @@ def update_user_username():
         return {"ok": False, "error": "Username changing error!", "exception": str(e)}
     return {"ok": True, "msg": "Username changed successfully!"}
 
-@bp.patch("/update/user/email")
+@bp.patch("/user/update/email")
 def update_user_email():
     data = json.loads(request.data)
     user = get_current_user()
-    if not user: return {"ok": False, "error": "User does not exist!"}
+    if not user: return {"ok": False, "error": "User not authorized!"}
     try:
         user.email = data["email"]
         user.validate()
@@ -64,12 +64,12 @@ def update_user_email():
     return {"ok": True, "msg": "Email changed successfully!"}
 
 
-@bp.post("/create/profile")
+@bp.post("/user/create/profile")
 def create_profile():
     data = json.loads(request.data)
     try:
         user = get_current_user()
-        if not user: return {"ok": False, "error": "User does not exist!"}
+        if not user: return {"ok": False, "error": "User not authorized!"}
         if "stream_name" not in data:
             return {"ok": False, "error": "Stream without name!"}
         streamer = StreamingProfile(
@@ -81,12 +81,12 @@ def create_profile():
         return {"ok": False, "error": "Streamer profile error!", "exception": str(e)}
     return {"ok": True, "msg": "Streamer profile created successfully!"}
 
-@bp.patch("/update/profile/name")
+@bp.patch("/user/update/profile/name")
 def update_profile_stream_name():
     data = json.loads(request.data)
     try:
         user = get_current_user()
-        if not user: return {"ok": False, "error": "User does not exist!"}
+        if not user: return {"ok": False, "error": "User not authorized!"}
         if "stream_name" not in data:
             return {"ok": False, "error": "Stream without name!"}
         StreamingProfile.objects(user=user).update(stream_name=data["stream_name"])
@@ -96,12 +96,12 @@ def update_profile_stream_name():
 
 
 
-@bp.get("/profile/services")
+@bp.get("/user/profile/services")
 def profile_services_list():
     data = json.loads(request.data)
     try:
         user = get_current_user()
-        if not user: return {"ok": False, "error": "User does not exist!"}
+        if not user: return {"ok": False, "error": "User not authorized!"}
         if "stream_name" not in data:
             return {"ok": False, "error": "Stream without name!"}
         profile = StreamingProfile.objects(user=user).first()
@@ -110,12 +110,12 @@ def profile_services_list():
     except Exception as e:
         return {"ok": False, "error": "Stream service adding error!", "exception": str(e)}
 
-@bp.patch("/add/profile/services")
+@bp.patch("/user/profile/services/add")
 def add_profile_services():
     data = json.loads(request.data)
     try:
         user = get_current_user()
-        if not user: return {"ok": False, "error": "User does not exist!"}
+        if not user: return {"ok": False, "error": "User not authorized!"}
         if "stream_name" not in data:
             return {"ok": False, "error": "Stream without name!"}
         service = FrontendChatService.objects(name=data["service_name"]).first()
@@ -128,12 +128,12 @@ def add_profile_services():
         return {"ok": False, "error": "Stream service adding error!", "exception": str(e)}
     return {"ok": True, "msg": "Stream service added successfully!"}
 
-@bp.patch("/remove/profile/services")
+@bp.patch("/user/profile/services/remove")
 def remove_profile_services():
     data = json.loads(request.data)
     try:
         user = get_current_user()
-        if not user: return {"ok": False, "error": "User does not exist!"}
+        if not user: return {"ok": False, "error": "User not authorized!"}
         if "stream_name" not in data:
             return {"ok": False, "error": "Stream without name!"}
         service = FrontendChatService.objects(name=data["service_name"]).first()
@@ -147,7 +147,7 @@ def remove_profile_services():
     return {"ok": True, "msg": "Stream service removed successfully!"}
 
 
-@bp.get("/subscriptions")
+@bp.get("/user/subscriptions")
 def sub_count():
     user = get_current_user()
     return {
@@ -155,13 +155,13 @@ def sub_count():
         "subscriptions": [ subscription.user.username for subscription in user.subscriptions ]
     }
 
-@bp.post("/auth")
+@bp.post("/user/auth")
 def auth():
     data = json.loads(request.data)
     user = User.objects(username=data["user"]).first()
     if not user:
         user = User.objects(email=data["user"]).first()
-    if not user: return {"ok": False, "error": "User does not exist!"}
+    if not user: return {"ok": False, "error": "User not exists!"}
 
     if user.password != hashlib.sha512(data["password"].encode()).hexdigest():
         return {"ok": False, "error": "Invalid password!"}

@@ -105,7 +105,7 @@ def msg_send(streamer):
     data = request.data
     data = json.loads(data)
     user = get_current_user()
-    if not user: return {"ok": False, "error": "User does not exist!"}
+    if not user: return {"ok": False, "error": "User not authorized!"}
 
     timestamp = request.args.get("timestamp", datetime.now().timestamp())
     timestamp = datetime.fromtimestamp(timestamp)
