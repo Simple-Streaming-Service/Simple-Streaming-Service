@@ -58,7 +58,7 @@ def update_user_password():
     try:
         if user.password != hashlib.sha512(data["old_password"].encode()).hexdigest():
             return {"ok": False, "error": "Invalid old password!"}
-        user.password = hashlib.sha512(data["password"].encode()).hexdigest()
+        user.password = hashlib.sha512(data["new_password"].encode()).hexdigest()
         user.validate()
         user.save()
     except Exception as e:

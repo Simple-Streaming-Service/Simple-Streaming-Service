@@ -1,11 +1,21 @@
 @import url("colors.css");
 @import url("styles.css");
 
+#change-password {
+	position: absolute;
+	top: 35%;
+	left: 10%;
+    width: 30%;
+}
+#change-password .row {
+	margin: 20px;
+}
+
 .row {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	margin: 10px !important;
+	margin: 10px;
 }
 .row * {
   	flex: 1 1 auto;

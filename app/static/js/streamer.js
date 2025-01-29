@@ -51,12 +51,10 @@ function showDataToast(data) {
         close: true,
         gravity: "top",
         position: "right",
-        style: data.ok ?
-            {
-                background: "linear-gradient(90deg, rgba(57,255,213,1) 0%, rgba(0,251,72,1) 100%)",
-            } :
-            {
-                background: "linear-gradient(90deg, rgba(255,133,57,1) 0%, rgba(251,0,115,1) 100%)",
-            }
+        style: {
+            background: data.ok
+                ? "linear-gradient(90deg, rgba(57,255,213,1) 0%, rgba(0,251,72,1) 100%)"
+                : "linear-gradient(90deg, rgba(255,133,57,1) 0%, rgba(251,0,115,1) 100%)",
+        }
     }).showToast();
 }
