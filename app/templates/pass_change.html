@@ -12,6 +12,7 @@
 {% block content %}
     <script type="module" src="{{ url_for('static', filename='js/user.js') }}"></script>
     <div class="container">
+
         <label class="row">
             Username:
             <input type="text" name="username" value="{{ user.username }}" placeholder="Username" readonly>
@@ -25,53 +26,37 @@
                  width="25" height="25" onclick="email_change('{{ url_for("api.update_user_email") }}')">
         </label>
         <div class="row">
-            <div class="btn" onclick="document.getElementById('change-password').open = true;">Change password</div>
-            <dialog id="change-password" onsubmit="change_password('{{ for_url('api.update_user_password') }}')">
-                <form method="dialog" name='change_password'>
-                    <h2>Change Password</h2>
-                    <label>
-                        Current Password:
-                        <input type="password" name="current_password" placeholder="Current Password" required>
-                    </label>
-                    <label>
-                        New Password:
-                        <input type="password" name="new_password" placeholder="New Password" required>
-                    </label>
+            <div class="btn" onclick="document.getElementById('change-password-dialog').open = true">Change password</div>
+            <dialog id="change-password-dialog" onsubmit="change_password()">
+                <p>Greetings, one and all!</p>
+                <form method="dialog">
+                    <button>OK</button>
                 </form>
             </dialog>
         </div>
 
-        <div style="height: 50px"></div>
         {% if is_streamer %}
             <script type="module" src="{{ url_for('static', filename='js/streamer.js') }}" onload="
                     get_token('{{ url_for('api.get_token') }}');
                     window.stream_name_uri = '{{ url_for('api.update_profile_stream_name') }}';
                     "></script>
-
             <h1>Streamer Menu:</h1>
-            <label class="row">
-                Streaming key:
-                <input type="password" name="streaming_key" readonly>
-                <img class="img-btn" src="{{ url_for('static', filename='img/view.svg') }}" alt="Toggle Streaming Key"
-                     width="25" height="25" onclick="toggle_key()">
-                <img class="img-btn" src="{{ url_for('static', filename='img/reload.svg') }}" alt="Toggle Streaming Key"
-                     width="25" height="25" onclick="regenerate_token('{{ url_for('api.regenerate_token') }}'); get_token('{{ url_for('api.get_token') }}')">
-            </label>
-            <div style="height: 50px"></div>
-
-            <form name="stream" style="width: 100%">
-                 <label class="row">
-                   <a class="btn" href="{{ url_for('static', filename='cert/server.crt') }}">TLS Certificate</a>
+            <form name="stream">
+                <label class="row">
+                    Streaming key:
+                    <input type="password" name="streaming_key" readonly>
+                    <img class="img-btn" src="{{ url_for('static', filename='img/view.svg') }}" alt="Toggle Streaming Key"
+                         width="25" height="25" onclick="toggle_key()">
+                    <img class="img-btn" src="{{ url_for('static', filename='img/reload.svg') }}" alt="Toggle Streaming Key"
+                         width="25" height="25" onclick="regenerate_token('{{ url_for('api.regenerate_token') }}'); get_token('{{ url_for('api.get_token') }}')">
                 </label>
                 <label class="row">
                     Stream name:
                     <input type="text" placeholder="Stream name" name="stream_name"
                            value="{{ profile.stream_name }}" onchange="window.changes.push('name')">
                 </label>
-                <div class="row">
-                    <div class="btn">
-                        <input type="submit" name="update_stream_data" value="Update">
-                    </div>
+                <div class="btn">
+                    <input type="submit" name="update_stream_data" value="Update">
                 </div>
             </form>
         {% else %}
@@ -96,8 +81,6 @@
                 }
             </script>
         {% endif %}
-
-        <div style="height: 50px"></div>
         <div class="row">
             <div class="btn" onclick="log_out('{{ url_for('api.logout') }}', '{{ url_for('main.index') }}', '{{ csrf_token() }}')">Log Out</div>
         </div>

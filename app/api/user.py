@@ -124,7 +124,7 @@ def get_token():
     if not user: return {"ok": False, "error": "User not authorized!"}
     profile = StreamingProfile.objects(user=user).first()
     if not profile: return {"ok": False, "error": "User not a streamer!"}
-    return {"ok": True, "token": profile.token}
+    return {"ok": True, "token": f"{user.username}?token={profile.token}"}
 
 @bp.post("/user/profile/token/regenerate")
 def regenerate_token():
@@ -151,7 +151,10 @@ def update_profile_stream_name():
         if not user: return {"ok": False, "error": "User not authorized!"}
         if "stream_name" not in data:
             return {"ok": False, "error": "Stream without name!"}
-        StreamingProfile.objects(user=user).update(stream_name=data["stream_name"])
+        streamer = StreamingProfile.objects(user=user).first()
+        streamer.stream_name = data["stream_name"]
+        streamer.validate()
+        streamer.save()
     except Exception as e:
         return {"ok": False, "error": "Stream name change error!", "exception": str(e)}
     return {"ok": True, "msg": "Stream name changed successfully!"}

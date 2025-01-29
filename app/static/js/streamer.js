@@ -26,6 +26,24 @@ window.get_token = (uri) => {
 }
 
 
+window.changes = []
+const form = document.querySelector('form[name="stream"]');
+form.addEventListener('submit', async evt => {
+    evt.preventDefault();
+    if (window.changes.includes("name")) {
+        const input = document.querySelector(`input[name='stream_name']`);
+        fetch(window.stream_name_uri, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: `{"stream_name":"${input.value}"}`
+        }).then(resp => resp.json())
+            .then(data => showDataToast(data));
+    }
+    window.changes = []
+});
+
 function showDataToast(data) {
     Toastify({
         text: data.ok ? data.msg : data.error,

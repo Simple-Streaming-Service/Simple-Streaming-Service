@@ -47,6 +47,10 @@ window.email_change = (uri) => {
     }
 }
 
+window.change_password = (uri) => {
+    console.log("change_password");
+}
+
 function showDataToast(data) {
     Toastify({
         text: data.ok ? data.msg : data.error,
