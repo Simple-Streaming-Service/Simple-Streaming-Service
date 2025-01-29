@@ -1,8 +1,7 @@
 import hashlib
 import random
 
-import jwt
-from flask import request, json, session, current_app
+from flask import request, json, session
 
 from app import csrf
 from app.api import bp
