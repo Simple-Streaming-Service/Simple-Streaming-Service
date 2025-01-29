@@ -25,7 +25,7 @@
                     </form>
                 {% endif %}
             </div>
-            <script type="module" src="{{ url_for('static', filename='js/chat.js') }}"
+            <script type="module" src="{{ url_for('static', filename='js/stream.js') }}"
                     onload="init_chat((md) => { {{ chat_initializer }} }); update_chat('{{ streamer }}')"></script>
         </div>
     </div>

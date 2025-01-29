@@ -1,18 +1,25 @@
 from flask import session
 
+from app.main import bp
 from app.models.account import User
 
 
 def is_authenticated():
-    return 'user_id' in session
+    return get_current_user() is not None
 
 def get_current_user():
-    user_id = session.get('user_id', None)
-    if user_id is None:
-        return None
-    return User.objects(id=user_id).first()
+    user = session.get('user', None)
+    if user is None: return None
+    return User.objects(username=user).first()
 
 def get_user(args):
     if "user" not in args:
         return None
     return User.objects(username=args["user"]).first()
+
+@bp.context_processor
+def utility_processor():
+    return dict(
+        is_authenticated=is_authenticated,
+        get_current_user=get_current_user
+    )

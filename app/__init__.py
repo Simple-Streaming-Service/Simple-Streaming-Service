@@ -1,15 +1,17 @@
 from time import sleep
 
 from flask import Flask
+from flask_wtf import CSRFProtect
 from mongoengine import connect, get_connection
 
 from config import Config
 
+csrf = CSRFProtect()
 
 def create_app(config_class=Config):
     app = Flask(__name__)
+    csrf.init_app(app)
     app.config.from_object(config_class)
-
     # Initialize Flask extensions here
     load_mongo(app)
 
@@ -18,7 +20,8 @@ def create_app(config_class=Config):
     app.register_blueprint(main_bp)
 
     from app.api import bp as api_bp
-    app.register_blueprint(api_bp, url_prefix='/api')
+    app.register_blueprint(api_bp, url_prefix='/api/v1')
+    csrf.exempt(api_bp)
 
     return app
 

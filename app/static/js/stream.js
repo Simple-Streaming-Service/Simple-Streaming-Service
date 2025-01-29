@@ -9,7 +9,7 @@ window.init_chat = (initializer) => {
 }
 
 window.send_request = (streamer) => {
-    fetch(`/api/stream/${streamer}/chat/send`, {
+    fetch(`/api/v1/stream/${streamer}/chat/send`, {
         method: 'POST',
         body: JSON.stringify({
             "user": "Anonym",
@@ -23,7 +23,7 @@ window.send_request = (streamer) => {
 }
 
 window.update_chat = (streamer) => {
-    fetch(`/api/stream/${streamer}/chat/list?timestamp=${Math.trunc(Date.now() / 1000)}&limit=50`, {
+    fetch(`/api/v1/stream/${streamer}/chat/list?timestamp=${Math.trunc(Date.now() / 1000)}&limit=50`, {
         method: 'GET'
     }).then(response => {
         response.json().then(chat => {

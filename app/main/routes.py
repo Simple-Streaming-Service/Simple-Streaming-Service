@@ -12,15 +12,18 @@ def index():
 
     r = requests.get(config["MTX_API_URI"] + "/v3/paths/list")
     if r.status_code == 200:
+        print(r.content, flush=True)
         data = r.json()
         if "items" in data:
             streams = []
             for x in data["items"]:
-                profile = StreamingProfile.objects(user= User.objects(username=x["name"]).first()).first()
-                if profile:
-                    streams.append({
-                       "streamer": x["name"],
-                        "name": profile.stream_name
-                    })
+                profile = StreamingProfile.objects(user=User.objects(username=x["name"]).first()).first()
+                if not profile:
+                    return {"error": f"Streamer {x['name']} not found!"}
+                streams.append({
+                    "streamer": x["name"],
+                    "name": profile.stream_name
+                })
+
             return render_template("index.html", streams=streams)
     return {"error": f"MediaMTX API on {config["MTX_API_URI"]} not available"}

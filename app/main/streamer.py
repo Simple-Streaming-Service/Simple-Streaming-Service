@@ -4,7 +4,7 @@ from app.main import bp
 from flask import render_template, current_app
 
 from app.models.account import User, StreamingProfile
-from app.services.user import is_authenticated
+from app.services.user import is_authenticated, get_current_user
 
 
 @bp.get("/<streamer>")
@@ -20,4 +20,5 @@ def stream_watch(streamer):
         live_path=config["STREAMS_REDIRECT"],
         chat_initializer=str.join("\n", [service.initializer_code for service in streamer.services]),
         chat_converter=str.join("\n", [service.converter_code for service in streamer.services]),
-        authenticated=is_authenticated())
+        authenticated=is_authenticated(),
+        user=get_current_user())

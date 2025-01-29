@@ -1,4 +1,3 @@
-from PIL.ImageChops import offset
 from flask import request, json
 
 from app.api import bp

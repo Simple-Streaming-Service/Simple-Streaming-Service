@@ -1,5 +1,5 @@
-from mongoengine import Document, StringField, EmailField, ReferenceField, ListField, EmbeddedDocumentField
-
+from mongoengine import Document, StringField, EmailField, ReferenceField, ListField, EmbeddedDocumentField, \
+    BooleanField
 
 
 class StreamingProfile(Document):
@@ -17,6 +17,7 @@ from app.models.service import FrontendChatService
 class StreamingProfile(Document):
     user = ReferenceField(document_type=User, unique=True)
     token = StringField(required=True, unique=True)
+    withCredentials = BooleanField(required=True, default=False)
 
     # Settings
     stream_name = StringField(required=True)

@@ -1,0 +1,19 @@
+@import url("colors.css");
+@import url("styles.css");
+
+.row {
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+	margin: 10px !important;
+}
+
+.img-btn {
+	color: white;
+}
+
+.img-btn:hover {
+	filter: blur(1px);
+	color: gray;
+}
+

@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block head %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/user.css') }}">
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+{% endblock %}
+
+{% block title %}
+    {{ User }} | Profile
+{% endblock %}
+
+{% block content %}
+    <script type="module" src="{{ url_for('static', filename='js/user.js') }}"></script>
+    <div class="container">
+
+        <label class="row">
+            Username:
+            <input type="text" name="username" value="{{ user.username }}" placeholder="Username" readonly>
+            <img class="img-btn" src="{{ url_for('static', filename='img/pencil.svg') }}" alt="Change Username"
+                 width="25" height="25" onclick="username_change('{{ url_for("api.update_user_username") }}')">
+        </label>
+        <label class="row">
+            Email:
+            <input type="email" name="email" value="{{ user.email }}" placeholder="Email" readonly>
+            <img class="img-btn" src="{{ url_for('static', filename='img/pencil.svg') }}" alt="Change Email"
+                 width="25" height="25" onclick="email_change('{{ url_for("api.update_user_email") }}')">
+        </label>
+        <div class="row">
+            <div class="btn">Change password</div>
+        </div>
+
+        {% if is_streamer %}
+            <script type="module" src="{{ url_for('static', filename='js/streamer.js') }}" onload="get_token('{{ url_for('api.get_token') }}')"></script>
+            <h1>Streamer Menu:</h1>
+            <form name="stream">
+                <label class="row">
+                    Streaming key:
+                    <input type="password" name="streaming_key" readonly>
+                    <img class="img-btn" src="{{ url_for('static', filename='img/view.svg') }}" alt="Toggle Streaming Key"
+                         width="25" height="25" onclick="toggle_key()">
+                    <img class="img-btn" src="{{ url_for('static', filename='img/reload.svg') }}" alt="Toggle Streaming Key"
+                         width="25" height="25" onclick="regenerate_token('{{ url_for('api.regenerate_token') }}'); get_token('{{ url_for('api.get_token') }}')">
+                </label>
+                <label class="row">
+                    Stream name:
+                    <input type="text" placeholder="Stream name" name="stream_name" value="{{ profile.stream_name }}">
+                </label>
+                <div class="btn">
+                    <input type="submit" value="Update">
+                </div>
+            </form>
+        {% else %}
+             <div class="row">
+                <div class="btn" onclick="create_profile()">Become a streamer</div>
+            </div>
+            <script>
+                function create_profile() {
+                    fetch('{{ url_for('api.create_profile') }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: '{"stream_name": "My first stream"}'
+                    }).then(resp => resp.json())
+                        .then(data => {
+                            if (data.ok)
+                                location.reload();
+                            else
+                                alert(data.error);
+                        });
+                }
+            </script>
+        {% endif %}
+        <div class="row">
+            <div class="btn" onclick="log_out('{{ url_for('api.logout') }}', '{{ url_for('main.index') }}', '{{ csrf_token() }}')">Log Out</div>
+        </div>
+    </div>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+{% endblock %}
