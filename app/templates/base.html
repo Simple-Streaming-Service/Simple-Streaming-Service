@@ -8,7 +8,14 @@
     {% block head %}{% endblock %}
 </head>
 <body>
-    <div class="nav"><h1 class="logo">Live Streams</h1></div>
+    <div class="nav">
+        <a href="/"><h1 class="logo">Live Streams</h1></a>
+        {% if is_authenticated() %}
+            <a href="{{ url_for('main.user_profile') }}">Profile</a>
+        {% else %}
+            <a href="{{ url_for('main.auth') }}">Sign In</a>
+        {% endif %}
+    </div>
     <div class="content">
         {% block content %}{% endblock %}
     </div>

@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block head %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">
+{% endblock %}
+
+{% block title %}
+    Sign In
+{% endblock %}
+
+{% block content %}
+    <form name="form" method="post" enctype="multipart/form-data">
+        <label>
+            Username:
+            <input type="text" name="username" placeholder="Username" required>
+        </label>
+        <label>
+            Password:
+            <input type="password" name="password" placeholder="Password" required>
+        </label>
+        <input type="submit" value="Login">
+        <label>
+            No account? <a href="{{ url_for('main.register') }}">Create an account</a>
+        </label>
+    </form>
+    <script type="text/javascript">
+      ((uri) => {
+        function serialize(formData) {
+          const data = {};
+          for (const [k, v] of formData) data[k] = v;
+          return data;
+        }
+
+        // Register a listener for submit events and suppress the default behavior of the form.
+        const form = document.querySelector('form[name="form"]');
+        form.addEventListener('submit', async evt => {
+          evt.preventDefault();
+          const formData = new FormData(evt.target);
+          const data = serialize(formData);
+          fetch(uri, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify(data)
+          }).then(resp => resp.json())
+              .then(data => {
+                  if (data.ok)
+                      location.href = '{{ url_for(redirect_uri) }}';
+                  else
+                      alert(data.error);
+              });
+        });
+
+      })({{ url_for('api.auth') | tojson }});
+    </script>
+{% endblock %}

@@ -1,0 +1,19 @@
+@import url("colors.css");
+
+form {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+input {
+    font-family: arial, serif;
+	font-size:16px;
+	vertical-align:middle;
+	background:#333;
+	color:#fff;
+	border:0;
+	display:inline-block;
+	margin:1px;
+	height:30px;
+}

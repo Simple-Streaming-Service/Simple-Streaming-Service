@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block head %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">
+{% endblock %}
+
+{% block title %}
+    Sign Up
+{% endblock %}
+
+{% block content %}
+    <form name="form" method="post" enctype="multipart/form-data">
+        <meta name="redirect_uri" content="{{ url_for(redirect_uri) }}"/>
+
+        <label>
+            Username:
+            <input type="text" name="username" placeholder="Username" required>
+        </label>
+        <label>
+            Email:
+            <input type="email" name="email" placeholder="Email" required>
+        </label>
+        <label>
+            Password:
+            <input type="password" name="password" placeholder="Password" required>
+        </label>
+        <input type="submit" value="Register">
+        <label>
+            Already have an account? <a href="{{ url_for('main.auth') }}">Sign In</a>
+        </label>
+    </form>
+    <script type="text/javascript">
+      ((uri) => {
+        function serialize(formData) {
+          const data = {};
+          for (const [k, v] of formData) data[k] = v;
+          return data;
+        }
+
+        const form = document.querySelector('form[name="form"]');
+        form.addEventListener('submit', async evt => {
+            evt.preventDefault();
+            const formData = new FormData(evt.target);
+            const data = serialize(formData);
+            fetch(uri, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify(data)
+            }).then(resp => resp.json())
+                .then(data => {
+                  if (data.ok)
+                      location.href = '{{ url_for(redirect_uri) }}';
+                  else
+                      alert(data.error);
+                });
+        });
+
+      })({{ url_for('api.create_user') | tojson }});
+    </script>
+{% endblock %}
