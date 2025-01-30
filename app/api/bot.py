@@ -54,3 +54,48 @@ def bot_create():
         return {"ok": False, "error": "Bot creation error!", "exception": str(e)}
 
     return {"ok": True, "msg": "Bot created successfully!"}
+
+
+@bp.get("/bot/token")
+def bot_get_token():
+    data = json.loads(request.data)
+    user = get_current_user()
+    if not user: return {"ok": False, "error": "User not authorized!"}
+
+    bot_user = User.objects(username=data["bot_username"]).first()
+    if not bot_user: return {"ok": False, "error": "Bot user not exists!"}
+
+    if bot_user.password != hashlib.sha512(data["bot_password"].encode()).hexdigest():
+        return {"ok": False, "error": "Bot user password invalid!"}
+
+    bot = Bot.objects(user=bot_user, creator=user).first()
+    if not bot: return {"ok": False, "error": "Bot not exists!"}
+    return {"ok": True, "token": bot.token}
+
+@bp.patch("/bot/token/regenerate")
+def bot_regenerate_token():
+    data = json.loads(request.data)
+    user = get_current_user()
+    if not user: return {"ok": False, "error": "User not authorized!"}
+
+    bot_user = User.objects(username=data["bot_username"]).first()
+    if not bot_user: return {"ok": False, "error": "Bot user not exists!"}
+
+    if bot_user.password != hashlib.sha512(data["bot_password"].encode()).hexdigest():
+        return {"ok": False, "error": "Bot user password invalid!"}
+
+    bot = Bot.objects(user=bot_user, creator=user).first()
+    if not bot: return {"ok": False, "error": "Bot not exists!"}
+
+    try:
+        while True:
+            token = random.randbytes(32).hex()
+            if Bot.objects(token=token).count() == 0:
+                break
+
+        bot.token = token
+        bot.validate()
+        bot.save()
+    except Exception as e:
+        return {"ok": False, "error": "Bot token regeneration error!", "exception": str(e)}
+    return {"ok": True, "msg": "Bot token regenerated successfully!"}
