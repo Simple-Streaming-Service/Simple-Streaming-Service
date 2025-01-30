@@ -2,12 +2,19 @@
 @import url("styles.css");
 
 #change-password {
-	position: absolute;
 	top: 35%;
+}
+#add-bot {
+	top: 35%;
+}
+.dialog {
+	position: absolute;
 	left: 10%;
     width: 30%;
 }
-#change-password .row {
+
+
+.dialog .row {
 	margin: 20px;
 }
 

@@ -44,6 +44,19 @@ window.update_chat = (streamer) => {
 
 function handleError(error, streamer) {
     // TODO: Error handling!
-    alert(error);
+    showDataToast(error)
     if (streamer) setTimeout(update_chat, 10_000, streamer);
+}
+
+function showDataToast(data) {
+    Toastify({
+        text: data,
+        duration: 3000,
+        close: true,
+        gravity: "top",
+        position: "right",
+        style: {
+            background: "linear-gradient(90deg, rgba(255,133,57,1) 0%, rgba(251,0,115,1) 100%)",
+        }
+    }).showToast();
 }

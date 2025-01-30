@@ -5,7 +5,7 @@ from flask import request, json, session
 
 from app import csrf
 from app.api import bp
-from app.models.account import User, StreamingProfile
+from app.models.account import User, StreamingProfile, Bot
 from app.models.service import FrontendChatService
 from app.services.user import get_current_user
 
@@ -212,10 +212,24 @@ def remove_profile_services():
 @bp.get("/user/subscriptions")
 def sub_count():
     user = get_current_user()
+    if not user: return {"ok": False, "error": "User not authorized!"}
+
     return {
         "ok": True,
         "subscriptions": [ subscription.user.username for subscription in user.subscriptions ]
     }
+
+@bp.get("/user/bots")
+def user_bots_list():
+    user = get_current_user()
+    if not user: return {"ok": False, "error": "User not authorized!"}
+
+    bots = Bot.objects(creator=user)
+    return {
+        "ok": True,
+        "bots": [bot.user.username for bot in bots]
+    }
+
 
 
 @bp.post("/mediamtx/auth")
