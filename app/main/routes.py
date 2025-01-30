@@ -1,3 +1,5 @@
+import base64
+
 import requests
 
 from app.main import bp
@@ -17,11 +19,12 @@ def index():
         if "items" in data:
             streams = []
             for x in data["items"]:
-                profile = StreamingProfile.objects(user=User.objects(username=x["name"]).first()).first()
+                username = base64.urlsafe_b64decode(x["name"].replace('~', '=').encode()).decode()
+                profile = StreamingProfile.objects(user=User.objects(username=username).first()).first()
                 if not profile:
-                    return {"error": f"Streamer {x['name']} not found!"}
+                    return {"error": f"Streamer {username} not found!"}
                 streams.append({
-                    "streamer": x["name"],
+                    "streamer": username,
                     "name": profile.stream_name
                 })
 

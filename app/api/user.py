@@ -1,3 +1,4 @@
+import base64
 import hashlib
 import random
 
@@ -123,7 +124,7 @@ def get_token():
     if not user: return {"ok": False, "error": "User not authorized!"}
     profile = StreamingProfile.objects(user=user).first()
     if not profile: return {"ok": False, "error": "User not a streamer!"}
-    return {"ok": True, "token": f"{user.username}?token={profile.token}"}
+    return {"ok": True, "token": f"{base64.urlsafe_b64encode(user.username.encode()).decode().replace('=', '~')}?token={profile.token}"}
 
 @bp.post("/user/profile/token/regenerate")
 def regenerate_token():
@@ -240,7 +241,7 @@ def streamer_auth():
     if data["action"] == 'read':
         return {"ok": True, "msg": "Reading permission granted!"}
 
-    user = User.objects(username=data["path"]).first()
+    user = User.objects(username=base64.urlsafe_b64decode(data["path"].replace('~', '=').encode()).decode()).first()
     if not user: return {"ok": False, "error": "User not found!"}, 400
 
     profile = StreamingProfile.objects(user=user).first()
