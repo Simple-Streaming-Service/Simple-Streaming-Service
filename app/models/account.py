@@ -15,7 +15,7 @@ from app.models.messaging import Message
 from app.models.service import FrontendChatService
 
 class StreamingProfile(Document):
-    user = ReferenceField(document_type=User, unique=True)
+    user = ReferenceField(document_type=User, unique=True, required=True)
     token = StringField(required=True, unique=True)
     withCredentials = BooleanField(required=True, default=False)
 
@@ -27,5 +27,12 @@ class StreamingProfile(Document):
     subscribers = ListField(default=[], field=ReferenceField(required=True, document_type=User))
     viewers = ListField(default=[], field=ReferenceField(required=True, document_type=User))
     messages = ListField(default=[], field=EmbeddedDocumentField(required=True, document_type=Message))
+
+
+class Bot(Document):
+    user = ReferenceField(document_type=User, unique=True, required=True)
+    token = StringField(required=True, unique=True)
+
+    creator = ReferenceField(document_type=User, required=True)
 
 

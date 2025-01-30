@@ -51,10 +51,20 @@
                 body: JSON.stringify(data)
             }).then(resp => resp.json())
                 .then(data => {
-                  if (data.ok)
-                      location.href = '{{ url_for(redirect_uri) }}';
-                  else
-                      alert(data.error);
+                    if (data.ok)
+                        location.href = '{{ url_for(redirect_uri) }}';
+                    else {
+                        Toastify({
+                            text: data.error,
+                            duration: 3000,
+                            close: true,
+                            gravity: "top",
+                            position: "right",
+                            style: {
+                                background: "linear-gradient(90deg, rgba(255,133,57,1) 0%, rgba(251,0,115,1) 100%)",
+                            }
+                        }).showToast()
+                    }
                 });
         });
 

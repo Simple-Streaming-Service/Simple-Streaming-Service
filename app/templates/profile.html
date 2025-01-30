@@ -11,42 +11,78 @@
 
 {% block content %}
     <script type="module" src="{{ url_for('static', filename='js/user.js') }}"></script>
-    <div class="container">
 
+    <dialog class="container" id="change-password" onsubmit="window.change_password('{{ url_for('api.update_user_password') }}')">
+        <div class="row">
+            <h2>Change Password</h2>
+            <img class="img-btn" src="{{ url_for('static', filename='img/cross.svg') }}" alt="Close Password Change Dialog"
+                 width="25" height="25" onclick="document.getElementById('change-password').open = false;">
+        </div>
+        <form method="dialog" name='change_password'>
+            <label class="row">
+                Current Password:
+                <input type="password" name="old_password" placeholder="Current Password" required>
+            </label>
+            <label class="row">
+                New Password:
+                <input type="password" name="new_password" placeholder="New Password" required>
+            </label>
+            <div class="row">
+                <div class="btn">
+                    <input type="submit" value="Change Password">
+                </div>
+            </div>
+        </form>
+    </dialog>
+
+    <div class="container">
         <label class="row">
             Username:
             <input type="text" name="username" value="{{ user.username }}" placeholder="Username" readonly>
-            <img class="img-btn" src="{{ url_for('static', filename='img/pencil.svg') }}" alt="Change Username"
+            <img class="img-btn" src="{{ url_for('static', filename='img/pencil.svg') }}" alt="Change Username Button"
                  width="25" height="25" onclick="username_change('{{ url_for("api.update_user_username") }}')">
         </label>
         <label class="row">
             Email:
             <input type="email" name="email" value="{{ user.email }}" placeholder="Email" readonly>
-            <img class="img-btn" src="{{ url_for('static', filename='img/pencil.svg') }}" alt="Change Email"
+            <img class="img-btn" src="{{ url_for('static', filename='img/pencil.svg') }}" alt="Change Email Button"
                  width="25" height="25" onclick="email_change('{{ url_for("api.update_user_email") }}')">
         </label>
         <div class="row">
-            <div class="btn">Change password</div>
+            <div class="btn" onclick="document.getElementById('change-password').open = true;">Change password</div>
         </div>
 
+        <div style="height: 50px"></div>
         {% if is_streamer %}
-            <script type="module" src="{{ url_for('static', filename='js/streamer.js') }}" onload="get_token('{{ url_for('api.get_token') }}')"></script>
+            <script type="module" src="{{ url_for('static', filename='js/streamer.js') }}" onload="
+                    get_token('{{ url_for('api.get_token') }}');
+                    window.stream_name_uri = '{{ url_for('api.update_profile_stream_name') }}';
+                    "></script>
+
             <h1>Streamer Menu:</h1>
-            <form name="stream">
-                <label class="row">
-                    Streaming key:
-                    <input type="password" name="streaming_key" readonly>
-                    <img class="img-btn" src="{{ url_for('static', filename='img/view.svg') }}" alt="Toggle Streaming Key"
-                         width="25" height="25" onclick="toggle_key()">
-                    <img class="img-btn" src="{{ url_for('static', filename='img/reload.svg') }}" alt="Toggle Streaming Key"
-                         width="25" height="25" onclick="regenerate_token('{{ url_for('api.regenerate_token') }}'); get_token('{{ url_for('api.get_token') }}')">
-                </label>
+            <label class="row">
+                Streaming key:
+                <input type="password" name="streaming_key" readonly>
+                <img class="img-btn" src="{{ url_for('static', filename='img/view.svg') }}" alt="Toggle Streaming Key Button"
+                     width="25" height="25" onclick="toggle_key()">
+                <img class="img-btn" src="{{ url_for('static', filename='img/reload.svg') }}" alt="Regenerate Streaming Key Button"
+                     width="25" height="25" onclick="regenerate_token('{{ url_for('api.regenerate_token') }}'); get_token('{{ url_for('api.get_token') }}')">
+            </label>
+            <div class="row">
+                <a class="btn" href="{{ url_for('static', filename='cert/server.crt') }}">TLS Certificate</a>
+            </div>
+            <div style="height: 50px"></div>
+
+            <form name="stream" style="width: 100%">
                 <label class="row">
                     Stream name:
-                    <input type="text" placeholder="Stream name" name="stream_name" value="{{ profile.stream_name }}">
+                    <input type="text" placeholder="Stream name" name="stream_name"
+                           value="{{ profile.stream_name }}" onchange="window.changes.push('name')">
                 </label>
-                <div class="btn">
-                    <input type="submit" value="Update">
+                <div class="row">
+                    <div class="btn">
+                        <input type="submit" name="update_stream_data" value="Update">
+                    </div>
                 </div>
             </form>
         {% else %}
@@ -71,6 +107,8 @@
                 }
             </script>
         {% endif %}
+
+        <div style="height: 50px"></div>
         <div class="row">
             <div class="btn" onclick="log_out('{{ url_for('api.logout') }}', '{{ url_for('main.index') }}', '{{ csrf_token() }}')">Log Out</div>
         </div>

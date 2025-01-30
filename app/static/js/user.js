@@ -47,6 +47,26 @@ window.email_change = (uri) => {
     }
 }
 
+ function serialize(formData) {
+    const data = {};
+    for (const [k, v] of formData) data[k] = v;
+    return data;
+}
+
+window.change_password = (uri) => {
+    const form = document.querySelector('form[name="change_password"]');
+    const data = serialize(new FormData(form));
+    fetch(uri, {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': '{{ csrf_token() }}'
+        },
+        body: JSON.stringify(data)
+    }).then(resp => resp.json())
+        .then(data => showDataToast(data));
+}
+
 function showDataToast(data) {
     Toastify({
         text: data.ok ? data.msg : data.error,
@@ -54,12 +74,10 @@ function showDataToast(data) {
         close: true,
         gravity: "top",
         position: "right",
-        style: data.ok ?
-            {
-                background: "linear-gradient(90deg, rgba(57,255,213,1) 0%, rgba(0,251,72,1) 100%)",
-            } :
-            {
-                background: "linear-gradient(90deg, rgba(255,133,57,1) 0%, rgba(251,0,115,1) 100%)",
-            }
+        style: {
+            background: data.ok
+                ? "linear-gradient(90deg, rgba(57,255,213,1) 0%, rgba(0,251,72,1) 100%)"
+                : "linear-gradient(90deg, rgba(255,133,57,1) 0%, rgba(251,0,115,1) 100%)",
+        }
     }).showToast();
 }
