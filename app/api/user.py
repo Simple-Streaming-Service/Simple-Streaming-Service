@@ -52,7 +52,7 @@ def create_user():
 @bp.patch("/user/password/update")
 def update_user_password():
     data = json.loads(request.data)
-    user = get_current_user()
+    user = get_current_user(request.headers)
     if not user: return {"ok": False, "error": "User not authorized!"}
     try:
         if user.password != hashlib.sha512(data["old_password"].encode()).hexdigest():
@@ -67,7 +67,7 @@ def update_user_password():
 @bp.patch("/user/username/update")
 def update_user_username():
     data = json.loads(request.data)
-    user = get_current_user()
+    user = get_current_user(request.headers)
     if not user: return {"ok": False, "error": "User not authorized!"}
     try:
         user.username = data["username"]
@@ -81,7 +81,7 @@ def update_user_username():
 @bp.patch("/user/email/update")
 def update_user_email():
     data = json.loads(request.data)
-    user = get_current_user()
+    user = get_current_user(request.headers)
     if not user: return {"ok": False, "error": "User not authorized!"}
     try:
         user.email = data["email"]
@@ -96,7 +96,7 @@ def update_user_email():
 def create_profile():
     data = json.loads(request.data)
     try:
-        user = get_current_user()
+        user = get_current_user(request.headers)
         if not user: return {"ok": False, "error": "User not authorized!"}
         if "stream_name" not in data:
             return {"ok": False, "error": "Stream without name!"}
@@ -119,7 +119,7 @@ def create_profile():
 
 @bp.get("/user/profile/token")
 def get_token():
-    user = get_current_user()
+    user = get_current_user(request.headers)
     if not user: return {"ok": False, "error": "User not authorized!"}
     profile = StreamingProfile.objects(user=user).first()
     if not profile: return {"ok": False, "error": "User not a streamer!"}
@@ -127,7 +127,7 @@ def get_token():
 
 @bp.post("/user/profile/token/regenerate")
 def regenerate_token():
-    user = get_current_user()
+    user = get_current_user(request.headers)
     if not user: return {"ok": False, "error": "User not authorized!"}
     profile = StreamingProfile.objects(user=user).first()
     if not profile: return {"ok": False, "error": "User not a streamer!"}
@@ -146,7 +146,7 @@ def regenerate_token():
 def update_profile_stream_name():
     data = json.loads(request.data)
     try:
-        user = get_current_user()
+        user = get_current_user(request.headers)
         if not user: return {"ok": False, "error": "User not authorized!"}
         if "stream_name" not in data:
             return {"ok": False, "error": "Stream without name!"}
@@ -162,7 +162,7 @@ def update_profile_stream_name():
 def profile_services_list():
     data = json.loads(request.data)
     try:
-        user = get_current_user()
+        user = get_current_user(request.headers)
         if not user: return {"ok": False, "error": "User not authorized!"}
         if "stream_name" not in data:
             return {"ok": False, "error": "Stream without name!"}
@@ -176,7 +176,7 @@ def profile_services_list():
 def add_profile_services():
     data = json.loads(request.data)
     try:
-        user = get_current_user()
+        user = get_current_user(request.headers)
         if not user: return {"ok": False, "error": "User not authorized!"}
         if "stream_name" not in data:
             return {"ok": False, "error": "Stream without name!"}
@@ -194,7 +194,7 @@ def add_profile_services():
 def remove_profile_services():
     data = json.loads(request.data)
     try:
-        user = get_current_user()
+        user = get_current_user(request.headers)
         if not user: return {"ok": False, "error": "User not authorized!"}
         if "stream_name" not in data:
             return {"ok": False, "error": "Stream without name!"}
@@ -211,7 +211,7 @@ def remove_profile_services():
 
 @bp.get("/user/subscriptions")
 def sub_count():
-    user = get_current_user()
+    user = get_current_user(request.headers)
     if not user: return {"ok": False, "error": "User not authorized!"}
 
     return {
@@ -221,7 +221,7 @@ def sub_count():
 
 @bp.get("/user/bots")
 def user_bots_list():
-    user = get_current_user()
+    user = get_current_user(request.headers)
     if not user: return {"ok": False, "error": "User not authorized!"}
 
     bots = Bot.objects(creator=user)

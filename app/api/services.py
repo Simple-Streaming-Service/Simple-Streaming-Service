@@ -18,7 +18,7 @@ def services_get():
 
 @bp.post("/services/create")
 def upload_service():
-    user = get_current_user()
+    user = get_current_user(request.headers)
     if not user: return {"ok": False, "error": "User not authorized!"}
     data = dict(json.loads(request.data))
     try:
@@ -37,7 +37,7 @@ def upload_service():
 
 @bp.post("/services/delete")
 def delete_service():
-    user = get_current_user()
+    user = get_current_user(request.headers)
     if not user: return {"ok": False, "error": "User not authorized!"}
     # services = FrontendChatService.objects(author=user, name=request.args["name"])
     # services.delete()

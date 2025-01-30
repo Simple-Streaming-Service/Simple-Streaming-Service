@@ -59,8 +59,7 @@ window.change_password = (uri) => {
     fetch(uri, {
         method: 'PATCH',
         headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': '{{ csrf_token() }}'
+            'Content-Type': 'application/json'
         },
         body: JSON.stringify(data)
     }).then(resp => resp.json())
@@ -72,7 +71,10 @@ const bot_ui = (username) => {
     item.classList.add('row');
     item.innerHTML = `
         ${username}
-        <div class="btn" onclick="start_bot_verification(window.api.bot_token, 'POST', '${username}')">Get Token</div>
+         <img class="img-btn" src="${window.img.token}" alt="Get Bot ${username} Token Button"
+                 width="25" height="25" onclick="start_bot_verification(window.api.bot_get_token, 'POST', '${username}')">
+         <img class="img-btn" src="${window.img.reload}" alt="Regenerate Bot ${username} Token Button"
+                 width="25" height="25" onclick="start_bot_verification(window.api.bot_regenerate_token, 'PATCH', '${username}')">
          <img class="img-btn" src="${window.img.cross}" alt="Remove Bot ${username} Button"
                  width="25" height="25" onclick="start_bot_verification(window.api.bot_remove, 'DELETE', '${username}')">
     `;

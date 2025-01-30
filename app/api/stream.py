@@ -27,7 +27,8 @@ def subscribers_count(streamer):
 def subscribe(streamer):
     streamer = find_streamer(streamer)
     if not streamer: return {"ok": False, "error": "Streamer does not exist!"}
-    user = get_current_user()
+    user = get_current_user(request.headers)
+    if not user: return {"ok": False, "error": "User not authorized!"}
 
     user.subscriptions.append(streamer)
     user.subscriptions = list(set(user.subscriptions))
@@ -43,7 +44,8 @@ def subscribe(streamer):
 def unsubscribe(streamer):
     streamer = find_streamer(streamer)
     if not streamer: return {"ok": False, "error": "Streamer does not exist!"}
-    user = get_current_user()
+    user = get_current_user(request.headers)
+    if not user: return {"ok": False, "error": "User not authorized!"}
 
     user.subscriptions.remove(streamer)
     user.save()
@@ -57,7 +59,9 @@ def unsubscribe(streamer):
 def view_connect(streamer):
     streamer = find_streamer(streamer)
     if not streamer: return {"ok": False, "error": "Streamer does not exist!"}
-    streamer.viewers.append(get_current_user())
+    user = get_current_user(request.headers)
+    if not user: return {"ok": False, "error": "User not authorized!"}
+    streamer.viewers.append(user)
     streamer.viewers = list(set(streamer.viewers))
     streamer.save()
     return {"ok": True, "msg": "Connected!"}
@@ -66,7 +70,9 @@ def view_connect(streamer):
 def view_disconnect(streamer):
     streamer = find_streamer(streamer)
     if not streamer: return {"ok": False, "error": "Streamer does not exist!"}
-    streamer.viewers.remove(get_current_user())
+    user = get_current_user(request.headers)
+    if not user: return {"ok": False, "error": "User not authorized!"}
+    streamer.viewers.remove(user)
     streamer.save()
     return {"ok": True, "msg": "Disconnected!"}
 
@@ -104,7 +110,7 @@ def msg_list(streamer):
 def msg_send(streamer):
     data = request.data
     data = json.loads(data)
-    user = get_current_user()
+    user = get_current_user(request.headers)
     if not user: return {"ok": False, "error": "User not authorized!"}
 
     timestamp = request.args.get("timestamp", datetime.now().timestamp())

@@ -78,10 +78,13 @@
             onload="get_bots('{{ url_for('api.user_bots_list') }}');
                     window.img ={
                         cross: '{{ url_for('static', filename='img/cross.svg') }}',
+                        reload: '{{ url_for('static', filename='img/reload.svg') }}',
+                        token: '{{ url_for('static', filename='img/token.svg') }}',
                     };
                     window.api = {
                         bot_remove: '{{  url_for("api.bot_remove") }}',
-                        bot_token: '{{  url_for("api.bot_get_token") }}',
+                        bot_get_token: '{{  url_for("api.bot_get_token") }}',
+                        bot_regenerate_token: '{{  url_for("api.bot_regenerate_token") }}',
                     };"></script>
 
     <div class="container">
