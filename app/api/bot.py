@@ -10,7 +10,7 @@ from app.services.user import get_current_user
 
 @bp.post("/bot/auth")
 def bot_auth():
-    bot = Bot.objects(token=request.headers.get("Api-Key", None)).first()
+    bot = Bot.objects(token=request.headers.get("X-Api-Key", None)).first()
     if not bot: return {"ok": False, "error": "Bot not exists!"}
 
     session['user'] = bot.user.username
@@ -18,7 +18,7 @@ def bot_auth():
 
 @bp.post("/bot/exit")
 def bot_logout():
-    bot = Bot.objects(token=request.headers.get("Api-Key", None)).first()
+    bot = Bot.objects(token=request.headers.get("X-Api-Key", None)).first()
     if not bot: return {"ok": False, "error": "Bot not exists!"}
     if get_current_user() != bot.user:
         return {"ok": False, "error": "Wrong bot credentials!"}

@@ -1,7 +1,6 @@
 from wsgiref.headers import Headers
 
 from flask import session
-from requests import Request
 
 from app.main import bp
 from app.models.account import User, Bot
@@ -14,7 +13,7 @@ def get_current_user(args : Headers=None):
     user = session.get('user', None)
     if user is None:
         if args is None: return None
-        token = args.get("Api-Key", None)
+        token = args.get("X-Api-Key", None)
         if token is None: return None
         bot = Bot.objects(token=token).first()
         if not bot: return None
@@ -31,5 +30,6 @@ def get_user(args):
 def utility_processor():
     return dict(
         is_authenticated=is_authenticated,
-        get_current_user=get_current_user
+        get_current_user=get_current_user,
+        get_user=get_user
     )
