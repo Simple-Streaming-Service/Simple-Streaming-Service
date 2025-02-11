@@ -2,7 +2,6 @@
 
 {% block head %}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/user.css') }}">
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
 {% endblock %}
 
 {% block title %}
@@ -10,9 +9,7 @@
 {% endblock %}
 
 {% block content %}
-    <script type="module" src="{{ url_for('static', filename='js/user.js') }}"></script>
-
-    <dialog class="container" id="change-password" onsubmit="window.change_password('{{ url_for('api.update_user_password') }}')">
+    <dialog class="container dialog" id="change-password" onsubmit="window.change_password('{{ url_for('api.update_user_password') }}')">
         <div class="row">
             <h2>Change Password</h2>
             <img class="img-btn" src="{{ url_for('static', filename='img/cross.svg') }}" alt="Close Password Change Dialog"
@@ -34,6 +31,60 @@
             </div>
         </form>
     </dialog>
+    <dialog class="container dialog" id="verify-bot" onsubmit="window.verify_bot('{{ url_for('api.user_bots_list') }}');">
+        <div class="row">
+            <h2>Add Bot</h2>
+            <img class="img-btn" src="{{ url_for('static', filename='img/cross.svg') }}" alt="Close Add Bot Dialog"
+                 width="25" height="25" onclick="document.getElementById('verify-bot').open = false;">
+        </div>
+        <form method="dialog" name='verify-bot'>
+            <input type="hidden" name="bot_username" required>
+            <label class="row">
+                Bot Password:
+                <input type="password" name="bot_password" placeholder="Bot Password" required>
+            </label>
+            <div class="row">
+                <div class="btn">
+                    <input type="submit" value="Verify">
+                </div>
+            </div>
+        </form>
+    </dialog>
+    <dialog class="container dialog" id="add-bot" onsubmit="window.add_bot('{{ url_for('api.bot_create') }}', '{{ url_for('api.user_bots_list') }}');">
+        <div class="row">
+            <h2>Add Bot</h2>
+                <img class="img-btn" src="{{ url_for('static', filename='img/cross.svg') }}" alt="Close Add Bot Dialog"
+                     width="25" height="25" onclick="document.getElementById('add-bot').open = false;">
+        </div>
+        <form method="dialog" name='add-bot'>
+            <label class="row">
+                Bot Username:
+                <input type="text" name="bot_username" placeholder="Bot Username" required>
+            </label>
+            <label class="row">
+                Bot Password:
+                <input type="password" name="bot_password" placeholder="Bot Password" required>
+            </label>
+            <div class="row">
+                <div class="btn">
+                    <input type="submit" value="Create Bot">
+                </div>
+            </div>
+        </form>
+    </dialog>
+
+    <script type="module" src="{{ url_for('static', filename='js/user.js') }}"
+            onload="get_bots('{{ url_for('api.user_bots_list') }}');
+                    window.img ={
+                        cross: '{{ url_for('static', filename='img/cross.svg') }}',
+                        reload: '{{ url_for('static', filename='img/reload.svg') }}',
+                        token: '{{ url_for('static', filename='img/token.svg') }}',
+                    };
+                    window.api = {
+                        bot_remove: '{{  url_for("api.bot_remove") }}',
+                        bot_get_token: '{{  url_for("api.bot_get_token") }}',
+                        bot_regenerate_token: '{{  url_for("api.bot_regenerate_token") }}',
+                    };"></script>
 
     <div class="container">
         <label class="row">
@@ -107,6 +158,17 @@
                 }
             </script>
         {% endif %}
+
+        <div style="height: 50px"></div>
+
+        <h1>Bots:</h1>
+        <ul id="bots">
+
+        </ul>
+        <div class="row">
+            <div class="btn" onclick="document.getElementById('add-bot').open = true;">Add Bot</div>
+        </div>
+
 
         <div style="height: 50px"></div>
         <div class="row">
