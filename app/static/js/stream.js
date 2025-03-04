@@ -22,8 +22,9 @@ window.send_request = (streamer) => {
     }).catch(handleError)
 }
 
+const startStamp = Math.trunc(Date.now() / 1000);
 window.update_chat = (streamer) => {
-    fetch(`/api/v1/stream/${streamer}/chat/list?timestamp=${Math.trunc(Date.now() / 1000)}&limit=50`, {
+    fetch(`/api/v1/stream/${streamer}/chat/list?startTimestamp=${startStamp}&endTimestamp=${Math.trunc(Date.now() / 1000)}&limit=50`, {
         method: 'GET'
     }).then(response => {
         response.json().then(chat => {

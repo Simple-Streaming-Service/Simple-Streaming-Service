@@ -87,13 +87,17 @@ def view_count(streamer):
 def msg_list(streamer):
     limit = int(request.args.get("limit", 10))
 
-    timestamp = int(request.args.get("timestamp", datetime.now().timestamp()))
-    timestamp = datetime.fromtimestamp(timestamp)
+    endTimestamp = int(request.args.get("endTimestamp", datetime.now().timestamp()))
+    endTimestamp = datetime.fromtimestamp(endTimestamp)
+
+
+    startTimestamp = int(request.args.get("startTimestamp", datetime.now().timestamp()))
+    startTimestamp = datetime.fromtimestamp(startTimestamp)
 
     streamer = find_streamer(streamer)
     if not streamer: return {"ok": False, "error": "Streamer does not exist!"}
 
-    filtered_messages = [msg for msg in streamer.messages if msg.timestamp <= timestamp]
+    filtered_messages = [msg for msg in streamer.messages if startTimestamp <= msg.timestamp <= endTimestamp]
     sorted_messages = sorted(filtered_messages, key=lambda x: x.timestamp, reverse=True)
     return {
         "ok": True,
