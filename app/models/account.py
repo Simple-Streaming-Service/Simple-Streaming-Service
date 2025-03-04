@@ -1,38 +1,33 @@
-from mongoengine import Document, StringField, EmailField, ReferenceField, ListField, EmbeddedDocumentField, \
-    BooleanField
+from neomodel import StructuredNode, StringProperty, EmailProperty, BooleanProperty, RelationshipTo, RelationshipFrom
 
 
-class StreamingProfile(Document):
-    pass
-
-class User(Document):
-    username = StringField(required=True, unique=True)
-    password = StringField(required=True)
-    email = EmailField(required=True, unique=True)
-    subscriptions = ListField(default=[], field=ReferenceField(required=True, document_type=StreamingProfile))
+class User(StructuredNode):
+    username = StringProperty(required=True, unique=True)
+    password = StringProperty(required=True)
+    email = EmailProperty(required=True, unique=True)
 
 from app.models.messaging import Message
 from app.models.service import FrontendChatService
 
-class StreamingProfile(Document):
-    user = ReferenceField(document_type=User, unique=True, required=True)
-    token = StringField(required=True, unique=True)
-    withCredentials = BooleanField(required=True, default=False)
+class StreamingProfile(StructuredNode):
+    user = RelationshipFrom(User, "User")
+    token = StringProperty(required=True, unique=True)
+    withCredentials = BooleanProperty(default=False)
 
     # Settings
-    stream_name = StringField(required=True)
-    services = ListField(default=[], field=ReferenceField(required=True, document_type=FrontendChatService))
+    stream_name = StringProperty(required=True)
+    services = RelationshipFrom(FrontendChatService, "Service")
 
     # Data
-    subscribers = ListField(default=[], field=ReferenceField(required=True, document_type=User))
-    viewers = ListField(default=[], field=ReferenceField(required=True, document_type=User))
-    messages = ListField(default=[], field=EmbeddedDocumentField(required=True, document_type=Message))
+    subscriptions = RelationshipTo(User, "Subscriber")
+    viewers = RelationshipTo(User, "Viewer")
+    messages = RelationshipTo(Message, "Message")
 
 
-class Bot(Document):
-    user = ReferenceField(document_type=User, unique=True, required=True)
-    token = StringField(required=True, unique=True)
+class Bot(StructuredNode):
+    user = RelationshipTo(User, "User")
+    token = StringProperty(required=True, unique=True)
 
-    creator = ReferenceField(document_type=User, required=True)
+    creator = RelationshipFrom(User, "Creator")
 
 

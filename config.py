@@ -16,9 +16,10 @@ class Config:
 
     STREAMS_REDIRECT = "http://" + MTX_HLS_URI
 
-    MONGO_HOST = os.getenv("MONGO_HOST", "localhost")
-    MONGO_PORT = os.getenv("MONGO_PORT", "27017")
-    MONGO_USERNAME = os.getenv("MONGO_USERNAME", "root")
-    MONGO_PASSWORD = os.getenv("MONGO_PASSWORD", "root")
-    MONGO_DB_NAME = os.getenv("MONGO_DB_NAME", "video_service")
-    MONGO_URI = f"mongodb://{MONGO_USERNAME}:{MONGO_PASSWORD}@{MONGO_HOST}:{MONGO_PORT}/{MONGO_DB_NAME}?authSource=admin"
+    DB_HOST = os.getenv("DB_HOST", "localhost")
+    DB_PORT = os.getenv("DB_PORT", "27017")
+    DB_USERNAME = os.getenv("DB_USERNAME", "root")
+    DB_PASSWORD = os.getenv("DB_PASSWORD", "root")
+    DB_NAME = os.getenv("DB_NAME", "video_service")
+    MONGO_URI = f"mongodb://{DB_USERNAME}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}?authSource=admin"
+    NEO4J_URI = f"neo4j://{DB_USERNAME}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}?authSource=admin"

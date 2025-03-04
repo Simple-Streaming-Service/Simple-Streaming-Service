@@ -1,19 +1,29 @@
-from time import sleep
-
 from flask import Flask
+from flask_graphql import GraphQLView
 from flask_wtf import CSRFProtect
-from mongoengine import connect, get_connection
+from mongoengine import connect
 
+from api.graphql import schema
 from config import Config
 
 csrf = CSRFProtect()
 
 def create_app(config_class=Config):
     app = Flask(__name__)
-    csrf.init_app(app)
     app.config.from_object(config_class)
     # Initialize Flask extensions here
     load_mongo(app)
+    csrf.init_app(app)
+    app.add_url_rule('/graphql', view_func=GraphQLView.as_view(
+        'graphql',
+        schema=schema,
+        graphiql=True,
+    ))
+    app.add_url_rule('/graphql/batch', view_func=GraphQLView.as_view(
+        'graphql',
+        schema=schema,
+        batch=True
+    ))
 
     # Register blueprints here
     from app.main import bp as main_bp

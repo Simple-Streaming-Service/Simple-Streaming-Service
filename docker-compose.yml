@@ -1,11 +1,9 @@
 services:
-    mongo:
-        image: mongo
+    db:
+        image: neo4j
         restart: always
         environment:
-            MONGO_INITDB_DATABASE: ${MONGO_DB_NAME}
-            MONGO_INITDB_ROOT_USERNAME: ${MONGO_USERNAME}
-            MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+            NEO4J_AUTH: "${DB_USERNAME}/${DB_PASSWORD}"
         volumes:
             - ./data:/data/db
         network_mode: host
@@ -18,18 +16,18 @@ services:
         network_mode: host
     flask-video-app:
         depends_on:
-            - mongo
+            - db
         environment:
             MTX_API_HOST: ${MTX_API_HOST}
             MTX_API_HOST_PORT: ${MTX_API_HOST_PORT}
             MTX_LIVE_HOST: ${MTX_LIVE_HOST}
             MTX_LIVE_HOST_PORT: ${MTX_LIVE_HOST_PORT}
-            MONGO_HOST: ${MONGO_HOST}
-            MONGO_PORT: ${MONGO_PORT}
+            DB_HOST: ${DB_HOST}
+            DB_PORT: ${DB_PORT}
             SECRET_KEY: ${SECRET_KEY}
-            MONGO_USERNAME: ${MONGO_USERNAME}
-            MONGO_PASSWORD: ${MONGO_PASSWORD}
-            MONGO_DB_NAME: ${MONGO_DB_NAME}
+            DB_USERNAME: ${DB_USERNAME}
+            DB_PASSWORD: ${DB_PASSWORD}
+            DB_NAME: ${DB_NAME}
         build: .
         command: ./boot.sh
         network_mode: host
