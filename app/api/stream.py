@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from flask import request, json
 
@@ -91,7 +91,7 @@ def msg_list(streamer):
     end_timestamp = datetime.fromtimestamp(end_timestamp)
 
 
-    start_timestamp = int(request.args.get("start_timestamp", datetime.min))
+    start_timestamp = int(request.args.get("start_timestamp", (datetime.now() - timedelta(days=1)).timestamp()))
     start_timestamp = datetime.fromtimestamp(start_timestamp)
 
     streamer = find_streamer(streamer)
