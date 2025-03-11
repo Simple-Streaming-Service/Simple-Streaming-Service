@@ -110,7 +110,7 @@ authInternalUsers:
 # }
 # If the response code is 20x, authentication is accepted, otherwise
 # it is discarded.
-authHTTPAddress: http://localhost:8088/api/v1/mediamtx/auth
+authHTTPAddress: http://localhost:8089/api/v1/mediamtx/auth
 # Actions to exclude from HTTP-based authentication.
 # Format is the same as the one of user permissions.
 authHTTPExclude:
