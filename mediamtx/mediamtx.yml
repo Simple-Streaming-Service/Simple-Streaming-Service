@@ -134,7 +134,7 @@ authHTTPExclude:
 # Users are expected to pass the JWT in the Authorization header or as a query parameter.
 # This is the JWKS URL that will be used to pull (once) the public key that allows
 # to validate JWTs.
-authJWTJWKS: http://localhost:5000/api/v1/mediamtx/auth
+authJWTJWKS: http://localhost:8089/api/v1/mediamtx/auth
 # name of the claim that contains permissions.
 authJWTClaimKey: mediamtx_permissions
 
