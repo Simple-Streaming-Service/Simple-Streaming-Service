@@ -340,7 +340,31 @@ API данного видеосервиса организовано следу�
     ```
     Возможные ошибки:
     * Streamer does not exist! - Стримера не существует
-8. **Отправка сообщения в чат**
+8. **Список сообщений в чате**
+    ```http
+        GET /api/v1/stream/<streamer>/chat/list?limit=<limit>&end_timestamp=<timestamp>&start_timestamp=<timestamp>
+    ```
+    В случае успеха возврашается сообщение:
+    ```json
+    {
+        "ok": true,
+        "messages": [
+            {
+                "user": "username",
+                "content": "message",
+                "timestamp": "timestamp" // Время отправки сообщения в формате я хз какой
+            },
+            {
+                "user": "username",
+                "content": "message",
+                "timestamp": "timestamp" // Время отправки сообщения в формате я хз какой
+            }
+        ]
+    }
+    ```
+    Возможные ошибки:
+    * Streamer does not exist! - Стримера не существует
+9. **Отправка сообщения в чат**
     ```http
         POST /api/v1/stream/<streamer>/chat/send
         Body: {
@@ -352,7 +376,7 @@ API данного видеосервиса организовано следу�
     {
         "ok": true,
         "msg": "Message sent!",
-        "timestamp": "timestamp" // Время отправки сообщения в формате я не ебу
+        "timestamp": "timestamp" // Время отправки сообщения в формате я хз какой
     }
     ```
     Возможные ошибки:
@@ -360,8 +384,77 @@ API данного видеосервиса организовано следу�
     * User not authorized! - Пользователь не авторизован
     * Content field is required! - Поле message обязательно для заполнения
 ### Services
-
+Это еще не сделано. Когда будет сделано, то появится здесь и в изменениях.
 ### Bot
+1. **Авторизация бота**  
+    ```http
+    POST /api/v1/bot/auth
+    X-Api-Key: <api-key> // Api ключ для авторизации бота
+    ``` 
+    В случае успеха возврашается сообщение:
+    ```json
+    {
+        "ok": true,
+        "msg": "Bot log in successfully!"
+    }
+    ```
+    Возможные ошибки:
+    * Bot not exists! - Бот не существует
+2. **Выход бота**  
+    ```http
+    POST /api/v1/bot/exit
+    X-Api-Key: <api-key> // Api ключ для авторизации бота
+    ``` 
+    В случае успеха возврашается сообщение:
+    ```json
+    {
+        "ok": true,
+        "msg": "Bot log out successfully!"
+    }
+    ```
+    Возможные ошибки:
+    * Bot not exists! - Бот не существует
+    * Wrong bot credentials! - Неверные учетные данные бота
+3. **Создание бота**  
+     ```http
+     POST /api/v1/bot/create
+     Body: {
+          "bot_username": "username",
+          "bot_password": "password"
+     }
+     ``` 
+     В случае успеха возврашается сообщение:
+     ```json
+     {
+          "ok": true,
+          "msg": "Bot created successfully!"
+     }
+     ```
+     Возможные ошибки:
+     * User not authorized! - Пользователь не авторизован
+     * Bot user not exists! - Пользователь для которого пытаются привязать бота не существует
+     * Bot user password invalid! - Неверный пароль пользователя для которого пытаются привязать бота
+     * Bot creation error! - Произошла ошибка создания бота. При данной ошибке в сообщении есть exception с информацией о том, что именно пошло не так. (пока так, пока не будет переписано api на neo4j)
+4. **Удаление бота**  
+     ```http
+     POST /api/v1/bot/remove
+     Body: {
+          "bot_username": "username",
+          "bot_password": "password"
+     }
+     ``` 
+     В случае успеха возврашается сообщение:
+     ```json
+     {
+          "ok": true,
+          "msg": "Bot removed successfully!"
+     }
+     ```
+     Возможные ошибки:
+     * User not authorized! - Пользователь не авторизован
+     * Bot user not exists! - Пользователь с которого пытаются отвязать бота
+     * Bot user password invalid! - Неверный пароль пользователя с которого пытаются отвязать бота
+     * Bot removing error! - Произошла ошибка удаления бота. При данной ошибке в сообщении есть exception с информацией о том, что именно пошло не так. (пока так, пока не будет переписано api на neo4j)
 
 # GraphQL
 Модуль учета лицензий – сбор, регистрация и управление данными о лицензиях, контроль сроков действия и активации лицензий.

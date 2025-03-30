@@ -20,7 +20,7 @@ class StreamingProfile(StructuredNode):
 
     # Data
     subscriptions = RelationshipTo(User, "Subscriber")
-    viewers = RelationshipTo(User, "Viewer")
+    # viewers = RelationshipTo(User, "Viewer")
     messages = RelationshipTo(Message, "Message")
 
 

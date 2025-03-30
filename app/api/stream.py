@@ -55,7 +55,7 @@ def unsubscribe(streamer):
     return {"ok": True, "msg": "Unsubscribed!"}
 
 
-@bp.get("/stream/<streamer>/viewers/connect")
+@bp.post("/stream/<streamer>/viewers/connect")
 def view_connect(streamer):
     streamer = find_streamer(streamer)
     if not streamer: return {"ok": False, "error": "Streamer does not exist!"}
@@ -66,7 +66,7 @@ def view_connect(streamer):
     streamer.save()
     return {"ok": True, "msg": "Connected!"}
 
-@bp.get("/stream/<streamer>/viewers/disconnect")
+@bp.post("/stream/<streamer>/viewers/disconnect")
 def view_disconnect(streamer):
     streamer = find_streamer(streamer)
     if not streamer: return {"ok": False, "error": "Streamer does not exist!"}

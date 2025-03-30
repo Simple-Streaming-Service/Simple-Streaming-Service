@@ -14,7 +14,7 @@ def bot_auth():
     if not bot: return {"ok": False, "error": "Bot not exists!"}
 
     session['user'] = bot.user.username
-    return {"ok": True, "msg": "User log in successfully!"}
+    return {"ok": True, "msg": "Bot log in successfully!"}
 
 @bp.post("/bot/exit")
 def bot_logout():
