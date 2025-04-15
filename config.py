@@ -4,6 +4,13 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 
 class Config:
+    """
+    Base configuration class.
+    This class contains configuration settings for the application.
+    It includes settings for the secret key, MongoDB connection,
+    and MTX API and HLS host settings.
+    The settings can be overridden by environment variables.
+    """
     SECRET_KEY = os.getenv("SECRET_KEY", "secret")
 
     MTX_API_HOST = os.getenv("MTX_API_HOST", "localhost")

@@ -9,6 +9,15 @@ from app.services.user import is_authenticated, get_current_user
 
 @bp.get("/<streamer>")
 def stream_watch(streamer):
+    """
+    Stream watch page.
+    This endpoint serves the stream watch page for a given streamer.
+    It retrieves the streamer's profile and checks if the streamer exists.
+    If the streamer does not exist, it returns an error message.
+    If the streamer exists, it renders the stream watch page with the streamer's information.
+    :param streamer: Streamer username
+    :return: HTML page with the streamer's information or JSON response with an error message
+    """
     streamer = User.objects(username=streamer).first()
     streamer = StreamingProfile.objects(user=streamer).first()
     if not streamer: return {"ok": False, "error": "Streamer does not exist!"}

@@ -8,7 +8,13 @@ from config import Config
 
 csrf = CSRFProtect()
 
+
 def create_app(config_class=Config):
+    """
+    Create a Flask application instance with the specified configuration class.
+    :param config_class: Configuration class to use for the application.
+    :return: Flask application instance.
+    """
     app = Flask(__name__)
     csrf.init_app(app)
     app.config.from_object(config_class)
@@ -25,7 +31,13 @@ def create_app(config_class=Config):
 
     return app
 
+
 def load_mongo(app):
+    """
+    Load MongoDB connection and check the connection.
+    :param app: Flask application instance.
+    """
+
     client = connect(host=app.config['MONGO_URI'], timeoutms=1000)
     try:
         app.logger.info("Connected to MongoDB: {0}", client.admin.command('ping'))

@@ -10,6 +10,14 @@ from app.models.account import StreamingProfile, User
 
 @bp.get("/")
 def index():
+    """
+    Index page.
+    This endpoint serves the index page of the application.
+    It retrieves the list of active streams from the MediaMTX API.
+    If the API is available, it returns the list of streams.
+    If the API is not available, it returns an error message.
+    :return: HTML page with the list of streams or JSON response with an error message
+    """
     config = current_app.config
 
     r = requests.get(config["MTX_API_URI"] + "/v3/paths/list")
