@@ -20,6 +20,7 @@
     border-radius: 5px;
     padding: 5px;
     background: var(--stream-card-color);
+    box-shadow: 0 0 10px var(--shadow-color);
 }
 
 .chat-messages {
