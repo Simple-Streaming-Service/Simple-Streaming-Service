@@ -10,7 +10,6 @@ body {
 
 .content {
     margin: 0.1vh;
-    box-shadow: 0 0 10px var(--shadow-color);
 }
 
 .center {
@@ -190,6 +189,7 @@ h1 {
 }
 
 .nav {
+    box-shadow: 0 0 10px var(--shadow-color);
     position: sticky;
     display: flex;
     justify-content: space-between;
