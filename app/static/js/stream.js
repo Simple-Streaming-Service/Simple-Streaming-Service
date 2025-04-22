@@ -20,6 +20,7 @@ window.send_request = (streamer) => {
             if (!chat.ok) handleError(chat.error);
         }).catch(handleError)
     }).catch(handleError)
+    message_text.value = '';
 }
 
 const startStamp = Math.trunc(Date.now() / 1000);
