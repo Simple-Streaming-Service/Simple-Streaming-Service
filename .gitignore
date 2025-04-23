@@ -2,3 +2,4 @@
 .idea
 *.crt
 *.key
+*.cnf
