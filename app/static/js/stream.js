@@ -37,7 +37,13 @@ window.update_chat = (streamer) => {
                     div.innerHTML = `${message.user}: ${md.render(message.content)}`;
                     chat_root.append(div);
                 })
-                setTimeout(update_chat, 100, streamer);
+                if (chat_root.children.length > 0)
+                    chat_root.children[0].scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'center',
+                        inline: 'start'
+                    });
+                setTimeout(update_chat, 1000, streamer);
             }
             else handleError(chat.error, streamer);
         }).catch(error => handleError(error, streamer));

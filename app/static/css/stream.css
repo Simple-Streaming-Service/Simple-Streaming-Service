@@ -2,38 +2,56 @@
 
 .streaming-container {
     background: var(--stream-card-color);
+    margin: 0 2%;
     border-radius: 5px;
     padding: 10px;
-    width: 100%;
+    width: 96%;
     height: auto;
-    display: grid;
-    grid-template-columns: 80% 20%;
+
+    display: flex;
+    flex-wrap: wrap;
+}
+
+iframe {
+    flex: 1 0 auto;
 }
 .video-container {
+    flex: 9 0 auto;
     aspect-ratio: 16 / 9;
-    width: 100%;
-    height: auto;
 }
 
 .chat {
-    margin-left: 10px;
+    min-height: 97%;
+    max-height: 97%;
+    display: flex;
+    flex-direction: column;
+    justify-content: end;
+
+    margin: 7px;
     border-radius: 5px;
-    padding: 5px;
+    padding: 20px;
     background: var(--stream-card-color);
     box-shadow: 0 0 10px var(--shadow-color);
 }
 
 .chat-messages {
+    flex: 29 0 auto;
 	min-height:93%;
 	max-height:93%;
-	overflow:auto;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .chat-messages__content {
+    display: flex;
+    flex-direction: column-reverse;
+    justify-content: end;
 	padding:1px;
+    min-height: 100%;
 }
 
 .chat__message {
+    flex: 0 0 auto;
     padding-left: 10px;
     margin-bottom: 10px;
 	border-left:3px solid #334;
@@ -47,6 +65,7 @@
 }
 
 .chat-input {
+    flex: 1 0 auto;
 	min-height:6%;
 }
 input {

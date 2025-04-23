@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'default.html' %}
 
 {% block head %}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/stream.css') }}">
@@ -11,22 +11,6 @@
 {% block content %}
     <div class="streaming-container">
         <iframe class="video-container" src="{{ live_path }}/{{ path }}" scrolling="no" allowfullscreen></iframe>
-        <div class='chat'>
-            <div class='chat-messages'>
-                <div class='chat-messages__content' id='messages'>
-                    Загрузка...
-                </div>
-            </div>
-            <div class='chat-input'>
-                {% if authenticated  %}
-                    <form method='post' id='chat-form' onsubmit="send_request('{{ streamer }}'); return false;">
-                        <textarea id='message-text' class='chat-form__input' placeholder='Введите сообщение' onkeypress='if (event.key === "Enter" && !event.shiftKey) {event.preventDefault();send_request("{{ streamer }}");}'></textarea>
-                        <input type='submit' class='chat-form__submit' value='Send'>
-                    </form>
-                {% endif %}
-            </div>
-            <script type="module" src="{{ url_for('static', filename='js/stream.js') }}"
-                    onload="init_chat((md) => { {{ chat_initializer }} }); update_chat('{{ streamer }}')"></script>
-        </div>
+        <iframe src="{{ url_for('main.stream_chat', streamer=streamer) }}" scrolling="no"></iframe>
     </div>
 {% endblock %}
