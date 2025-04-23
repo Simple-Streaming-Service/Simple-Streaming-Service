@@ -14,7 +14,7 @@ class Config:
     MTX_HLS_HOST_PORT = os.getenv("MTX_LIVE_HOST_PORT", "8888")
     MTX_HLS_URI = MTX_HLS_HOST + ":" + MTX_HLS_HOST_PORT
 
-    STREAMS_REDIRECT = "http://" + MTX_HLS_URI
+    STREAMS_REDIRECT = "https://" + MTX_HLS_URI
 
     DB_HOST = os.getenv("DB_HOST", "localhost")
     DB_PORT = os.getenv("DB_PORT", "27017")
