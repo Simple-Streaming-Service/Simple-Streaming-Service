@@ -6,6 +6,8 @@ class User(StructuredNode):
     username = StringProperty(required=True, unique=True)
     password = StringProperty(required=True)
     email = EmailProperty(required=True, unique=True)
+    subscriptions = RelationshipTo("app.models.account.StreamingProfile", "SUBSCRIBED")
+
     profile = RelationshipTo("app.models.account.StreamingProfile", "LINKED")
     bot = RelationshipFrom("app.models.account.Bot", "LINKED")
 
@@ -29,6 +31,6 @@ class StreamingProfile(StructuredNode):
 class Bot(StructuredNode):
     token = StringProperty(required=True, unique=True)
     user = RelationshipTo("app.models.account.User", "LINKED")
-    creator = RelationshipFrom("app.models.account.User", "AUTHOR")
+    author = RelationshipFrom("app.models.account.User", "AUTHOR")
 
 

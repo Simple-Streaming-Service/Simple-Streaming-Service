@@ -44,7 +44,7 @@ def bot_create():
         bot = Bot(token=token)
         bot.save()
         bot.user.connect(bot_user)
-        bot.creator.connect(user)
+        bot.author.connect(user)
     except Exception as e:
         return {"ok": False, "error": "Bot creation error!", "exception": str(e)}
 
@@ -66,7 +66,7 @@ def bot_remove():
         bot = bot_user.bot.single()
         if not bot: return {"ok": False, "error": "Bot not exists!"}
 
-        if bot.creator.single() != user:
+        if bot.author.single() != user:
             return {"ok": False, "error": "User not author of this bot!"}
         bot.delete()
     except Exception as e:
@@ -90,7 +90,7 @@ def bot_get_token():
     bot = bot_user.bot.single()
     if not bot: return {"ok": False, "error": "Bot not exists!"}
 
-    if bot.creator.single() != user:
+    if bot.author.single() != user:
         return {"ok": False, "error": "User not author of this bot!"}
 
     return {"ok": True, "token": bot.token}
@@ -110,7 +110,7 @@ def bot_regenerate_token():
     bot = bot_user.bot.single()
     if not bot: return {"ok": False, "error": "Bot not exists!"}
 
-    if bot.creator.single() != user:
+    if bot.author.single() != user:
         return {"ok": False, "error": "User not author of this bot!"}
 
     try:
