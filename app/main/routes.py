@@ -13,7 +13,7 @@ from app.services.user import is_authenticated, get_current_user
 def index():
     config = current_app.config
 
-    r = requests.get(config["MTX_API_URI"] + "/v3/paths/list")
+    r = requests.get(config["MTX_API_URI"] + "/v3/paths/list", timeout=int(config["MTX_API_TIMEOUT"]))
     if r.status_code == 200:
         print(r.content, flush=True)
         data = r.json()
@@ -31,7 +31,9 @@ def index():
                 })
 
             return render_template("index.html", streams=streams)
-    return {"error": f"MediaMTX API on {config["MTX_API_URI"]} not available"}
+
+    return render_template("index.html", streams=[],
+                           error=f"MediaMTX API on {config['MTX_API_URI']} not available")
 
 @bp.get("/<streamer>")
 def stream_watch(streamer):

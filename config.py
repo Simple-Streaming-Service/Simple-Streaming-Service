@@ -6,6 +6,7 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 class Config:
     SECRET_KEY = os.getenv("SECRET_KEY", "secret")
 
+    MTX_API_TIMEOUT = os.getenv("MTX_API_TIMEOUT", "1000")
     MTX_API_HOST = os.getenv("MTX_API_HOST", "localhost")
     MTX_API_HOST_PORT = os.getenv("MTX_API_HOST_PORT", "9997")
     MTX_API_URI = "http://" + MTX_API_HOST + ":" + MTX_API_HOST_PORT
