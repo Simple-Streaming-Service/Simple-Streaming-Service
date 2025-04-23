@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from flask import request, json
 
@@ -79,22 +79,25 @@ def msg_list(streamer):
     limit = int(request.args.get("limit", 10))
 
     end_timestamp = int(request.args.get("end_timestamp", datetime.now().timestamp()))
-    end_timestamp = datetime.fromtimestamp(end_timestamp)
+    end_timestamp = datetime.fromtimestamp(end_timestamp, tz=timezone.utc)
 
 
     start_timestamp = int(request.args.get("start_timestamp", (datetime.now() - timedelta(days=1)).timestamp()))
-    start_timestamp = datetime.fromtimestamp(start_timestamp)
+    start_timestamp = datetime.fromtimestamp(start_timestamp, tz=timezone.utc)
 
     streamer = find_streamer(streamer)
     if not streamer: return {"ok": False, "error": "Streamer does not exist!"}
 
-    filtered_messages = [msg for msg in streamer.messages.all() if start_timestamp <= msg.timestamp <= end_timestamp]
+    filtered_messages = [
+        msg for msg in streamer.messages.all()
+        if start_timestamp <= msg.timestamp <= end_timestamp
+    ]
     sorted_messages = sorted(filtered_messages, key=lambda x: x.timestamp, reverse=True)
     return {
         "ok": True,
         "messages": [
             {
-                "user": msg.user.username,
+                "user": msg.author.single().username,
                 "content": msg.content,
                 "timestamp": msg.timestamp
             } for msg in sorted_messages[:limit]
@@ -115,8 +118,9 @@ def msg_send(streamer):
     streamer = find_streamer(streamer)
     if not streamer: return {"ok": False, "error": "Streamer does not exist!"}
 
-    msg = Message(user=user, content=data["message"], timestamp=timestamp)
+    msg = Message(content=data["message"], timestamp=timestamp)
     msg.save()
+    msg.author.connect(user)
     streamer.messages.connect(msg)
     return {"ok": True, "msg": "Message sent!", "timestamp": timestamp}
 

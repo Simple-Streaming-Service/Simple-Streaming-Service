@@ -4,6 +4,6 @@ from neomodel import RelationshipFrom, DateTimeProperty, StringProperty, Structu
 
 
 class Message(StructuredNode):
-    user = RelationshipFrom("app.models.account.User", "AUTHOR")
+    author = RelationshipFrom("app.models.account.User", "AUTHOR")
     timestamp = DateTimeProperty(default=datetime.datetime.now)
     content = StringProperty(required=True)

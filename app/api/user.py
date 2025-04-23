@@ -218,10 +218,9 @@ def user_bots_list():
     user = get_current_user(request.headers)
     if not user: return {"ok": False, "error": "User not authorized!"}
 
-    bots = Bot.nodes.filter(creator__username=user.username)
     return {
         "ok": True,
-        "bots": [bot.user.username for bot in bots]
+        "bots": [bot.user.single().username for bot in user.bots.all()]
     }
 
 

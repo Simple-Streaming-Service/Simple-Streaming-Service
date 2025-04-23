@@ -39,7 +39,7 @@ def bot_create():
 
         while True:
             token = random.randbytes(32).hex()
-            if Bot.nodes.filter(token=token).count() == 0:
+            if len(Bot.nodes.filter(token=token)) == 0:
                 break
         bot = Bot(token=token)
         bot.save()
@@ -62,7 +62,13 @@ def bot_remove():
     try:
         if bot_user.password != hashlib.sha512(data["bot_password"].encode()).hexdigest():
             return {"ok": False, "error": "Bot user password invalid!"}
-        bot_user.bot.match(creator__username=user.username).delete()
+
+        bot = bot_user.bot.single()
+        if not bot: return {"ok": False, "error": "Bot not exists!"}
+
+        if bot.creator.single() != user:
+            return {"ok": False, "error": "User not author of this bot!"}
+        bot.delete()
     except Exception as e:
         return {"ok": False, "error": "Bot removing error!", "exception": str(e)}
 
@@ -81,8 +87,12 @@ def bot_get_token():
     if bot_user.password != hashlib.sha512(data["bot_password"].encode()).hexdigest():
         return {"ok": False, "error": "Bot user password invalid!"}
 
-    bot = bot_user.bot.match(creator__username=user.username).first_or_none()
+    bot = bot_user.bot.single()
     if not bot: return {"ok": False, "error": "Bot not exists!"}
+
+    if bot.creator.single() != user:
+        return {"ok": False, "error": "User not author of this bot!"}
+
     return {"ok": True, "token": bot.token}
 
 @bp.patch("/bot/token/regenerate")
@@ -97,8 +107,11 @@ def bot_regenerate_token():
     if bot_user.password != hashlib.sha512(data["bot_password"].encode()).hexdigest():
         return {"ok": False, "error": "Bot user password invalid!"}
 
-    bot = bot_user.bot.match(creator__username=user.username).first_or_none()
+    bot = bot_user.bot.single()
     if not bot: return {"ok": False, "error": "Bot not exists!"}
+
+    if bot.creator.single() != user:
+        return {"ok": False, "error": "User not author of this bot!"}
 
     try:
         while True:

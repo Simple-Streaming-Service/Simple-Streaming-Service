@@ -9,7 +9,7 @@ class User(StructuredNode):
     profile = RelationshipTo("app.models.account.StreamingProfile", "LINKED")
     bot = RelationshipFrom("app.models.account.Bot", "LINKED")
 
-    bot_author = RelationshipTo("app.models.account.Bot", "AUTHOR")
+    bots = RelationshipTo("app.models.account.Bot", "AUTHOR")
 
 class StreamingProfile(StructuredNode):
     user = RelationshipFrom("app.models.account.User", "LINKED")
@@ -22,8 +22,8 @@ class StreamingProfile(StructuredNode):
 
     # Data
     subscribers = RelationshipFrom("app.models.account.User", "SUBSCRIBED")
-    # viewers = RelationshipTo(User, "Viewer")
-    messages = RelationshipFrom("app.models.messaging.Message", "MESSAGES")
+    # viewers = RelationshipFrom("app.models.account.User", "VIEWER")
+    messages = RelationshipFrom("app.models.messaging.Message", "MESSAGE")
 
 
 class Bot(StructuredNode):
