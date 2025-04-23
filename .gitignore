@@ -4,3 +4,4 @@
 *.key
 *.cnf
 .env
+neo4j
