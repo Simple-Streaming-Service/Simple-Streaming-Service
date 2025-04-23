@@ -16,9 +16,9 @@ def auth():
     csrf.protect()
 
     data = json.loads(request.data)
-    user = User.objects(username=data["username"]).first()
+    user = User.nodes.first_or_none(username=data["username"])
     if not user:
-        user = User.objects(email=data["username"]).first()
+        user = User.nodes.first_or_none(email=data["username"])
     if not user: return {"ok": False, "error": "User not exists!"}
 
     if user.password != hashlib.sha512(data["password"].encode()).hexdigest():
@@ -44,7 +44,6 @@ def create_user():
             username=data["username"],
             email=data["email"],
             password=hashlib.sha512(data["password"].encode()).hexdigest())
-        user.validate()
         user.save()
     except Exception as e:
         return {"ok": False, "error": "Registration error!", "exception": str(e)}
@@ -59,7 +58,6 @@ def update_user_password():
         if user.password != hashlib.sha512(data["old_password"].encode()).hexdigest():
             return {"ok": False, "error": "Invalid old password!"}
         user.password = hashlib.sha512(data["new_password"].encode()).hexdigest()
-        user.validate()
         user.save()
     except Exception as e:
         return {"ok": False, "error": "User password changing error!", "exception": str(e)}
@@ -72,7 +70,6 @@ def update_user_username():
     if not user: return {"ok": False, "error": "User not authorized!"}
     try:
         user.username = data["username"]
-        user.validate()
         user.save()
     except Exception as e:
         return {"ok": False, "error": "Username changing error!", "exception": str(e)}
@@ -86,7 +83,6 @@ def update_user_email():
     if not user: return {"ok": False, "error": "User not authorized!"}
     try:
         user.email = data["email"]
-        user.validate()
         user.save()
     except Exception as e:
         return {"ok": False, "error": "Email changing error!", "exception": str(e)}
@@ -104,16 +100,15 @@ def create_profile():
 
         while True:
             token = random.randbytes(10).hex()
-            if StreamingProfile.objects(token=token).count() == 0:
+            if len(StreamingProfile.nodes.filter(token=token)) == 0:
                 break
 
         streamer = StreamingProfile(
-            user=user,
             stream_name=data["stream_name"],
             token=token,
         )
-        streamer.validate()
         streamer.save()
+        streamer.user.connect(user)
     except Exception as e:
         return {"ok": False, "error": "Streamer profile error!", "exception": str(e)}
     return {"ok": True, "msg": "Streamer profile created successfully!"}
@@ -122,7 +117,7 @@ def create_profile():
 def get_token():
     user = get_current_user(request.headers)
     if not user: return {"ok": False, "error": "User not authorized!"}
-    profile = StreamingProfile.objects(user=user).first()
+    profile = user.profile.single()
     if not profile: return {"ok": False, "error": "User not a streamer!"}
     return {"ok": True, "token": f"{base64.urlsafe_b64encode(user.username.encode()).decode().replace('=', '~')}?token={profile.token}"}
 
@@ -130,16 +125,15 @@ def get_token():
 def regenerate_token():
     user = get_current_user(request.headers)
     if not user: return {"ok": False, "error": "User not authorized!"}
-    profile = StreamingProfile.objects(user=user).first()
+    profile = user.profile.single()
     if not profile: return {"ok": False, "error": "User not a streamer!"}
 
     while True:
         token = random.randbytes(10).hex()
-        if StreamingProfile.objects(token=token).count() == 0:
+        if len(StreamingProfile.nodes.filter(token=token)) == 0:
             break
 
     profile.token = token
-    profile.validate()
     profile.save()
     return {"ok": True, "msg": "Token regenerated successfully!"}
 
@@ -151,9 +145,8 @@ def update_profile_stream_name():
         if not user: return {"ok": False, "error": "User not authorized!"}
         if "stream_name" not in data:
             return {"ok": False, "error": "Stream without name!"}
-        streamer = StreamingProfile.objects(user=user).first()
+        streamer = user.profile.single()
         streamer.stream_name = data["stream_name"]
-        streamer.validate()
         streamer.save()
     except Exception as e:
         return {"ok": False, "error": "Stream name change error!", "exception": str(e)}
@@ -167,7 +160,7 @@ def profile_services_list():
         if not user: return {"ok": False, "error": "User not authorized!"}
         if "stream_name" not in data:
             return {"ok": False, "error": "Stream without name!"}
-        profile = StreamingProfile.objects(user=user).first()
+        profile = user.profile.single()
         if not profile: return {"ok": False, "error": "Streamer does not exist!"}
         return {"ok": True, "services": [service.name for service in profile.services]}
     except Exception as e:
@@ -181,9 +174,9 @@ def add_profile_services():
         if not user: return {"ok": False, "error": "User not authorized!"}
         if "stream_name" not in data:
             return {"ok": False, "error": "Stream without name!"}
-        service = FrontendChatService.objects(name=data["service_name"]).first()
+        service = FrontendChatService.nodes.first_or_none(name=data["service_name"])
         if not service: return {"ok": False, "error": "Service does not exist!"}
-        profile = StreamingProfile.objects(user=user).first()
+        profile = user.profile.single()
         if not profile: return {"ok": False, "error": "Streamer does not exist!"}
         profile.services.append(service)
         profile.save()
@@ -199,9 +192,9 @@ def remove_profile_services():
         if not user: return {"ok": False, "error": "User not authorized!"}
         if "stream_name" not in data:
             return {"ok": False, "error": "Stream without name!"}
-        service = FrontendChatService.objects(name=data["service_name"]).first()
+        service = FrontendChatService.nodes.first_or_none(name=data["service_name"])
         if not service: return {"ok": False, "error": "Service does not exist!"}
-        profile = StreamingProfile.objects(user=user).first()
+        profile = user.profile.single()
         if not profile: return {"ok": False, "error": "Streamer does not exist!"}
         profile.services.remove(service)
         profile.save()
@@ -217,7 +210,7 @@ def sub_count():
 
     return {
         "ok": True,
-        "subscriptions": [ subscription.user.username for subscription in user.subscriptions ]
+        "subscriptions": [subscription.user.username for subscription in user.subscribers]
     }
 
 @bp.get("/user/bots")
@@ -225,7 +218,7 @@ def user_bots_list():
     user = get_current_user(request.headers)
     if not user: return {"ok": False, "error": "User not authorized!"}
 
-    bots = Bot.objects(creator=user)
+    bots = Bot.nodes.filter(creator__username=user.username)
     return {
         "ok": True,
         "bots": [bot.user.username for bot in bots]
@@ -241,10 +234,10 @@ def streamer_auth():
     if data["action"] == 'read':
         return {"ok": True, "msg": "Reading permission granted!"}
 
-    user = User.objects(username=base64.urlsafe_b64decode(data["path"].replace('~', '=').encode()).decode()).first()
+    user = User.nodes.first_or_none(username=base64.urlsafe_b64decode(data["path"].replace('~', '=').encode()).decode())
     if not user: return {"ok": False, "error": "User not found!"}, 400
 
-    profile = StreamingProfile.objects(user=user).first()
+    profile = user.profile.single()
     if not profile: return {"ok": False, "error": "Streamer not found!"}, 400
 
     if f"token={profile.token}" not in data["query"]:
@@ -254,9 +247,9 @@ def streamer_auth():
         return {"ok": False, "error": "Permission denied!"}, 403
 
     if profile.withCredentials:
-        user = User.objects(username=data["user"]).first()
+        user = User.nodes.first_or_none(username=data["user"])
         if not user:
-            user = User.objects(email=data["user"]).first()
+            user = User.nodes.first_or_none(email=data["user"])
         if not user: return {"ok": False, "error": "Wrong streamer credentials!"}, 401
         if user.password != hashlib.sha512(data["password"].encode()).hexdigest():
             return {"ok": False, "error": "Wrong streamer password!"}, 401

@@ -22,4 +22,4 @@ class Config:
     DB_PASSWORD = os.getenv("DB_PASSWORD", "root")
     DB_NAME = os.getenv("DB_NAME", "video_service")
     MONGO_URI = f"mongodb://{DB_USERNAME}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}?authSource=admin"
-    NEO4J_URI = f"neo4j://{DB_USERNAME}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}?authSource=admin"
+    NEO4J_URI = f"bolt://{DB_USERNAME}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}"

@@ -7,7 +7,7 @@ from app.services.user import get_current_user
 
 @bp.get("/services")
 def services():
-    objects = FrontendChatService.objects()
+    objects = FrontendChatService.nodes.all()
     shift = request.args.get("offset", 0, type=int)
     size = request.args.get("size", len(objects), type=int)
     return {"ok": True, "services": [service.name for service in objects[shift:shift + size]]}
@@ -29,7 +29,6 @@ def upload_service():
             initializer_code=data.get("initializer_code", ""),
             converter_code=data.get("converter_code", "")
         )
-        service.validate()
         service.save()
     except Exception as e:
         return {"ok": False, "error": "Service creation error!", "exception": str(e)}

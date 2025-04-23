@@ -10,7 +10,7 @@ from app.services.user import get_current_user
 
 @bp.post("/bot/auth")
 def bot_auth():
-    bot = Bot.objects(token=request.headers.get("X-Api-Key", None)).first()
+    bot = Bot.nodes.first_or_none(token=request.headers.get("X-Api-Key", None))
     if not bot: return {"ok": False, "error": "Bot not exists!"}
 
     session['user'] = bot.user.username
@@ -18,7 +18,7 @@ def bot_auth():
 
 @bp.post("/bot/exit")
 def bot_logout():
-    bot = Bot.objects(token=request.headers.get("X-Api-Key", None)).first()
+    bot = Bot.nodes.first_or_none(token=request.headers.get("X-Api-Key", None))
     if not bot: return {"ok": False, "error": "Bot not exists!"}
     if get_current_user() != bot.user:
         return {"ok": False, "error": "Wrong bot credentials!"}
@@ -31,7 +31,7 @@ def bot_create():
     user = get_current_user()
     if not user: return {"ok": False, "error": "User not authorized!"}
 
-    bot_user = User.objects(username=data["bot_username"]).first()
+    bot_user = User.nodes.first_or_none(username=data["bot_username"])
     if not bot_user: return {"ok": False, "error": "Bot user not exists!"}
     try:
         if bot_user.password != hashlib.sha512(data["bot_password"].encode()).hexdigest():
@@ -39,15 +39,12 @@ def bot_create():
 
         while True:
             token = random.randbytes(32).hex()
-            if Bot.objects(token=token).count() == 0:
+            if Bot.nodes.filter(token=token).count() == 0:
                 break
-        bot = Bot(
-            user=bot_user,
-            creator=user,
-            token=token
-        )
-        bot.validate()
+        bot = Bot(token=token)
         bot.save()
+        bot.user.connect(bot_user)
+        bot.creator.connect(user)
     except Exception as e:
         return {"ok": False, "error": "Bot creation error!", "exception": str(e)}
 
@@ -60,12 +57,12 @@ def bot_remove():
     user = get_current_user()
     if not user: return {"ok": False, "error": "User not authorized!"}
 
-    bot_user = User.objects(username=data["bot_username"]).first()
+    bot_user = User.nodes.first_or_none(username=data["bot_username"])
     if not bot_user: return {"ok": False, "error": "Bot user not exists!"}
     try:
         if bot_user.password != hashlib.sha512(data["bot_password"].encode()).hexdigest():
             return {"ok": False, "error": "Bot user password invalid!"}
-        Bot.objects(user=bot_user, creator=user).delete()
+        bot_user.bot.match(creator__username=user.username).delete()
     except Exception as e:
         return {"ok": False, "error": "Bot removing error!", "exception": str(e)}
 
@@ -78,13 +75,13 @@ def bot_get_token():
     user = get_current_user()
     if not user: return {"ok": False, "error": "User not authorized!"}
 
-    bot_user = User.objects(username=data["bot_username"]).first()
+    bot_user = User.nodes.first_or_none(username=data["bot_username"])
     if not bot_user: return {"ok": False, "error": "Bot user not exists!"}
 
     if bot_user.password != hashlib.sha512(data["bot_password"].encode()).hexdigest():
         return {"ok": False, "error": "Bot user password invalid!"}
 
-    bot = Bot.objects(user=bot_user, creator=user).first()
+    bot = bot_user.bot.match(creator__username=user.username).first_or_none()
     if not bot: return {"ok": False, "error": "Bot not exists!"}
     return {"ok": True, "token": bot.token}
 
@@ -94,23 +91,22 @@ def bot_regenerate_token():
     user = get_current_user()
     if not user: return {"ok": False, "error": "User not authorized!"}
 
-    bot_user = User.objects(username=data["bot_username"]).first()
+    bot_user = User.nodes.first_or_none(username=data["bot_username"])
     if not bot_user: return {"ok": False, "error": "Bot user not exists!"}
 
     if bot_user.password != hashlib.sha512(data["bot_password"].encode()).hexdigest():
         return {"ok": False, "error": "Bot user password invalid!"}
 
-    bot = Bot.objects(user=bot_user, creator=user).first()
+    bot = bot_user.bot.match(creator__username=user.username).first_or_none()
     if not bot: return {"ok": False, "error": "Bot not exists!"}
 
     try:
         while True:
             token = random.randbytes(32).hex()
-            if Bot.objects(token=token).count() == 0:
+            if len(Bot.nodes.filter(token=token)) == 0:
                 break
 
         bot.token = token
-        bot.validate()
         bot.save()
     except Exception as e:
         return {"ok": False, "error": "Bot token regeneration error!", "exception": str(e)}

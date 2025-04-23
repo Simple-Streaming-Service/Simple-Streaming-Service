@@ -4,8 +4,11 @@ services:
         restart: always
         environment:
             NEO4J_AUTH: "${DB_USERNAME}/${DB_PASSWORD}"
+
         volumes:
-            - ./data:/data/db
+            - ./neo4j/config:/config
+            - ./neo4j/data:/data
+            - ./neo4j/plugins:/plugins
         network_mode: host
     mediamtx:
         image: bluenviron/mediamtx

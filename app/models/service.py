@@ -1,12 +1,10 @@
-from neomodel import StructuredNode, StringProperty, FloatProperty, IntegerProperty, RelationshipFrom
-
-from app.models.account import User
+from neomodel import StructuredNode, StringProperty, RelationshipFrom
 
 
 class FrontendChatService(StructuredNode):
     name = StringProperty(required=True, unique=True)
     description = StringProperty(required=True)
-    author = RelationshipFrom(User, "Author")
+    author = RelationshipFrom("app.models.account.User", "AUTHOR")
 
     initializer_code = StringProperty(required=True)
     converter_code = StringProperty(required=True)

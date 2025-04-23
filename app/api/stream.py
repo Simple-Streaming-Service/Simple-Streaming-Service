@@ -2,8 +2,6 @@ from datetime import datetime, timedelta
 
 from flask import request, json
 
-from mongoengine import ValidationError
-
 from app.api import bp
 from app.models.account import User, StreamingProfile
 from app.models.messaging import Message
@@ -29,14 +27,7 @@ def subscribe(streamer):
     if not streamer: return {"ok": False, "error": "Streamer does not exist!"}
     user = get_current_user(request.headers)
     if not user: return {"ok": False, "error": "User not authorized!"}
-
-    user.subscriptions.append(streamer)
-    user.subscriptions = list(set(user.subscriptions))
-    user.save()
-
-    streamer.subscribers.append(user)
-    streamer.subscribers = list(set(streamer.subscribers))
-    streamer.save()
+    streamer.subscribers.disconnect(user)
 
     return {"ok": True, "msg": "Subscribed!"}
 
@@ -47,7 +38,7 @@ def unsubscribe(streamer):
     user = get_current_user(request.headers)
     if not user: return {"ok": False, "error": "User not authorized!"}
 
-    user.subscriptions.remove(streamer)
+    user.subscribers.remove(streamer)
     user.save()
 
     streamer.subscribers.remove(user)
@@ -97,7 +88,7 @@ def msg_list(streamer):
     streamer = find_streamer(streamer)
     if not streamer: return {"ok": False, "error": "Streamer does not exist!"}
 
-    filtered_messages = [msg for msg in streamer.messages if start_timestamp <= msg.timestamp <= end_timestamp]
+    filtered_messages = [msg for msg in streamer.messages.all() if start_timestamp <= msg.timestamp <= end_timestamp]
     sorted_messages = sorted(filtered_messages, key=lambda x: x.timestamp, reverse=True)
     return {
         "ok": True,
@@ -124,16 +115,11 @@ def msg_send(streamer):
     streamer = find_streamer(streamer)
     if not streamer: return {"ok": False, "error": "Streamer does not exist!"}
 
-    try:
-        msg = Message(user=user, content=data["message"], timestamp=timestamp)
-        msg.validate()
-        streamer.messages.append(msg)
-        streamer.save()
-    except ValidationError as e:
-        return {"ok": False, "error": "Message sent error!", "exception": str(e)}
+    msg = Message(user=user, content=data["message"], timestamp=timestamp)
+    msg.save()
+    streamer.messages.connect(msg)
     return {"ok": True, "msg": "Message sent!", "timestamp": timestamp}
 
 def find_streamer(streamer):
-    streamer = User.objects(username=streamer).first()
-    streamer = StreamingProfile.objects(user=streamer).first()
-    return streamer
+    user = User.nodes.first_or_none(username=streamer)
+    return user.profile.single()

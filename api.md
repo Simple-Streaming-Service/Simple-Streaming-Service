@@ -24,7 +24,7 @@ API данного видеосервиса организовано следу�
 Следственно можно разделить запросы в группы по цели воздействия.
 ## Формат возвращаемых данных
 Данные возвращаемые запросами имеют следующий формат:
-```json
+```json5
 {
     "ok": true, // true - запрос выполнен успешно, false - произошла ошибка
     "msg": "string", // Дополнительная информация при успешном завершении запроса, если нет другой информации
@@ -48,12 +48,11 @@ API данного видеосервиса организовано следу�
 ### User
 1. #### **Авторизация**  
     ```http
-    POST /api/v1/user/auth
+    POST /api/v1/user/auth HTTP/1.1
     CSRF-Token: <token> // Csrf токен для защиты от CSRF атак
-    Body: {
-        "username": "username or email",
-        "password": "password"
-    }
+    Content-Type: application/json
+    Accept: application/json
+    Body: { "username": "username or email", "password": "password" }
     ``` 
     В случае успеха возврашается сообщение:
     ```json
@@ -67,8 +66,9 @@ API данного видеосервиса организовано следу�
     * Invalid password! - Неверный пароль
 2. #### **Выход**  
     ```http
-    POST /api/v1/user/exit
+    POST /api/v1/user/exit HTTP/1.1
     CSRF-Token: <token> // Csrf токен для защиты от CSRF атак
+    Accept: application/json
     ``` 
     В случае успеха возврашается сообщение:
     ```json
@@ -80,13 +80,11 @@ API данного видеосервиса организовано следу�
     Ошибок для данного метода не предусмотрено.
 3. #### **Регистрация**  
      ```http
-     POST /api/v1/user/create
+     POST /api/v1/user/create HTTP/1.1
      CSRF-Token: <token> // Csrf токен для защиты от CSRF атак
-     Body: {
-          "username": "username",
-          "email": "email",
-          "password": "password"
-     }
+     Content-Type: application/json
+     Accept: application/json
+     Body: { "username": "username", "email": "email", "password": "password" }
      ``` 
      В случае успеха возврашается сообщение:
      ```json
@@ -99,11 +97,10 @@ API данного видеосервиса организовано следу�
      * Registration error! - Произошла ошибка регистрации. При данной ошибке в сообщении есть exception с информацией о том, что именно пошло не так. (пока так, пока не будет переписано api на neo4j)
 4. #### **Изменение пароля**  
      ```http
-     PATCH /api/v1/user/password/update
-     Body: {
-          "old_password": "old password",
-          "new_password": "new password"
-     }
+     PATCH /api/v1/user/password/update HTTP/1.1
+     Content-Type: application/json
+     Accept: application/json
+     Body: { "old_password": "old password", "new_password": "new password" }
      ``` 
      В случае успеха возврашается сообщение:
      ```json
@@ -118,10 +115,10 @@ API данного видеосервиса организовано следу�
      * User password changing error! - Произошла ошибка изменения пароля. При данной ошибке в сообщении есть exception с информацией о том, что именно пошло не так. (пока так, пока не будет переписано api на neo4j)
 5. #### **Изменение имени пользователя**  
      ```http
-     PATCH /api/v1/user/username/update
-     Body: {
-          "username": "new username"
-     }
+     PATCH /api/v1/user/username/update HTTP/1.1
+     Content-Type: application/json
+     Accept: application/json
+     Body: { "username": "new username" }
      ``` 
      В случае успеха возврашается сообщение:
      ```json
@@ -135,10 +132,10 @@ API данного видеосервиса организовано следу�
      * Username changing error! - Произошла ошибка изменения имени. При данной ошибке в сообщении есть exception с информацией о том, что именно пошло не так. (пока так, пока не будет переписано api на neo4j)
 6. #### **Изменение email**  
      ```http
-     PATCH /api/v1/user/email/update
-     Body: {
-          "email": "new email"
-     }
+     PATCH /api/v1/user/email/update HTTP/1.1
+     Content-Type: application/json
+     Accept: application/json
+     Body: { "email": "new email" }
      ``` 
      В случае успеха возврашается сообщение:
      ```json
@@ -152,10 +149,10 @@ API данного видеосервиса организовано следу�
      * Email changing error! - Произошла ошибка изменения email. При данной ошибке в сообщении есть exception с информацией о том, что именно пошло не так. (пока так, пока не будет переписано api на neo4j)
 7. #### **Создание профиля стримера**  
      ```http
-     POST /api/v1/user/profile/create
-     Body: {
-          "stream_name": "name"
-     }
+     POST /api/v1/user/profile/create HTTP/1.1
+     Content-Type: application/json
+     Accept: application/json
+     Body: { "stream_name": "name" }
      ``` 
      В случае успеха возврашается сообщение:
      ```json
@@ -170,7 +167,8 @@ API данного видеосервиса организовано следу�
      * Streamer profile error! - Произошла ошибка создания профиля стримера. При данной ошибке в сообщении есть exception с информацией о том, что именно пошло не так. (пока так, пока не будет переписано api на neo4j)
 8. #### **Получение токена стримера**
     ```http
-    GET /api/v1/user/profile/token
+    GET /api/v1/user/profile/token HTTP/1.1
+    Accept: application/json
     ``` 
     В случае успеха возврашается сообщение:
     ```json
@@ -184,7 +182,8 @@ API данного видеосервиса организовано следу�
     * User not a streamer! - Профиль стримера не существует
 9. #### **Регенерация токена стримера**
     ```http
-    POST /api/v1/user/profile/token/regenerate
+    POST /api/v1/user/profile/token/regenerate HTTP/1.1
+    Accept: application/json
     ``` 
     В случае успеха возврашается сообщение:
     ```json
@@ -198,10 +197,10 @@ API данного видеосервиса организовано следу�
     * User not a streamer! - Профиль стримера не существует
 10. #### **Обновление имени стрима**
     ```http
-    PATCH /api/v1/user/profile/name/update
-    Body: {
-        "stream_name": "new name"
-    }
+    PATCH /api/v1/user/profile/name/update HTTP/1.1
+    Content-Type: application/json
+    Accept: application/json
+    Body: { "stream_name": "new name" }
     ``` 
     В случае успеха возврашается сообщение:
     ```json
@@ -216,7 +215,8 @@ API данного видеосервиса организовано следу�
     * Stream name change error! - Произошла ошибка обновления имени стрима. При данной ошибке в сообщении есть exception с информацией о том, что именно пошло не так. (пока так, пока не будет переписано api на neo4j)
 11. #### **Список подписок пользователя**
     ```http
-        GET /api/v1/user/subscriptions
+    GET /api/v1/user/subscriptions HTTP/1.1
+    Accept: application/json
     ```
     В случае успеха возврашается сообщение:
     ```json
@@ -232,7 +232,8 @@ API данного видеосервиса организовано следу�
     * User not authorized! - Пользователь не авторизован
 12. #### **Список ботов пользователя**
     ```http
-        GET /api/v1/user/bots
+    GET /api/v1/user/bots HTTP/1.1
+    Accept: application/json
     ```
     В случае успеха возврашается сообщение:
     ```json
@@ -249,10 +250,11 @@ API данного видеосервиса организовано следу�
 ### Streaming
 1. **Подписан ли пользователь**
     ```http
-        GET /api/v1/stream/<streamer>/subscribers/contains
+    GET /api/v1/stream/<streamer>/subscribers/contains HTTP/1.1
+    Accept: application/json
     ```
     В случае успеха возврашается сообщение:
-    ```json
+    ```json5
     {
         "ok": true,
         "subscribed": true // true - подписан, false - не подписан
@@ -262,10 +264,11 @@ API данного видеосервиса организовано следу�
     * Streamer does not exist! - Стримера не существует
 2. **Количество подписанных пользователей**
     ```http
-        GET /api/v1/stream/<streamer>/subscribers/count
+    GET /api/v1/stream/<streamer>/subscribers/count HTTP/1.1
+    Accept: application/json
     ```
     В случае успеха возврашается сообщение:
-    ```json
+    ```json5
     {
         "ok": true,
         "count": 10 // Количество подписанных пользователей
@@ -275,7 +278,8 @@ API данного видеосервиса организовано следу�
     * Streamer does not exist! - Стримера не существует
 3. **Подписка на стримера**
     ```http
-        POST /api/v1/stream/<streamer>/subscribers/subscribe
+    POST /api/v1/stream/<streamer>/subscribers/subscribe HTTP/1.1
+    Accept: application/json
     ```
     В случае успеха возврашается сообщение:
     ```json
@@ -289,7 +293,8 @@ API данного видеосервиса организовано следу�
     * User not authorized! - Пользователь не авторизован
 4. **Отписка от стримера**
     ```http
-        POST /api/v1/stream/<streamer>/subscribers/unsubscribe
+    POST /api/v1/stream/<streamer>/subscribers/unsubscribe HTTP/1.1
+    Accept: application/json
     ```
     В случае успеха возврашается сообщение:
     ```json
@@ -303,7 +308,8 @@ API данного видеосервиса организовано следу�
     * User not authorized! - Пользователь не авторизован
 5. **Подключение к стриму**
     ```http
-        POST /api/v1/stream/<streamer>/viewers/connect
+    POST /api/v1/stream/<streamer>/viewers/connect HTTP/1.1
+    Accept: application/json
     ```
     В случае успеха возврашается сообщение:
     ```json
@@ -316,7 +322,8 @@ API данного видеосервиса организовано следу�
     * Streamer does not exist! - Стримера не существует
 6. **Отключение от стрима**
     ```http
-        POST /api/v1/stream/<streamer>/viewers/disconnect
+    POST /api/v1/stream/<streamer>/viewers/disconnect HTTP/1.1
+    Accept: application/json
     ```
     В случае успеха возврашается сообщение:
     ```json
@@ -329,10 +336,11 @@ API данного видеосервиса организовано следу�
     * Streamer does not exist! - Стримера не существует
 7. **Количество зрителей на стриме**
     ```http
-        GET /api/v1/stream/<streamer>/viewers/count
+    GET /api/v1/stream/<streamer>/viewers/count HTTP/1.1
+    Accept: application/json
     ```
     В случае успеха возврашается сообщение:
-    ```json
+    ```json5
     {
         "ok": true,
         "count": 10 // Количество зрителей на стриме
@@ -342,10 +350,11 @@ API данного видеосервиса организовано следу�
     * Streamer does not exist! - Стримера не существует
 8. **Список сообщений в чате**
     ```http
-        GET /api/v1/stream/<streamer>/chat/list?limit=<limit>&end_timestamp=<timestamp>&start_timestamp=<timestamp>
+    GET /api/v1/stream/<streamer>/chat/list?limit=<limit>&end_timestamp=<timestamp>&start_timestamp=<timestamp> HTTP/1.1
+    Accept: application/json
     ```
     В случае успеха возврашается сообщение:
-    ```json
+    ```json5
     {
         "ok": true,
         "messages": [
@@ -366,13 +375,13 @@ API данного видеосервиса организовано следу�
     * Streamer does not exist! - Стримера не существует
 9. **Отправка сообщения в чат**
     ```http
-        POST /api/v1/stream/<streamer>/chat/send
-        Body: {
-            "message": "message"
-        }
+    POST /api/v1/stream/<streamer>/chat/send HTTP/1.1
+    Content-Type: application/json
+    Accept: application/json
+    Body: { "message": "message" }
     ```
     В случае успеха возврашается сообщение:
-    ```json
+    ```json5
     {
         "ok": true,
         "msg": "Message sent!",
@@ -388,8 +397,9 @@ API данного видеосервиса организовано следу�
 ### Bot
 1. **Авторизация бота**  
     ```http
-    POST /api/v1/bot/auth
+    POST /api/v1/bot/auth HTTP/1.1
     X-Api-Key: <api-key> // Api ключ для авторизации бота
+    Accept: application/json
     ``` 
     В случае успеха возврашается сообщение:
     ```json
@@ -402,8 +412,9 @@ API данного видеосервиса организовано следу�
     * Bot not exists! - Бот не существует
 2. **Выход бота**  
     ```http
-    POST /api/v1/bot/exit
+    POST /api/v1/bot/exit HTTP/1.1
     X-Api-Key: <api-key> // Api ключ для авторизации бота
+    Accept: application/json
     ``` 
     В случае успеха возврашается сообщение:
     ```json
@@ -417,11 +428,10 @@ API данного видеосервиса организовано следу�
     * Wrong bot credentials! - Неверные учетные данные бота
 3. **Создание бота**  
      ```http
-     POST /api/v1/bot/create
-     Body: {
-          "bot_username": "username",
-          "bot_password": "password"
-     }
+     POST /api/v1/bot/create HTTP/1.1
+     Content-Type: application/json
+     Accept: application/json
+     Body: { "bot_username": "username", "bot_password": "password" }
      ``` 
      В случае успеха возврашается сообщение:
      ```json
@@ -437,11 +447,10 @@ API данного видеосервиса организовано следу�
      * Bot creation error! - Произошла ошибка создания бота. При данной ошибке в сообщении есть exception с информацией о том, что именно пошло не так. (пока так, пока не будет переписано api на neo4j)
 4. **Удаление бота**  
      ```http
-     POST /api/v1/bot/remove
-     Body: {
-          "bot_username": "username",
-          "bot_password": "password"
-     }
+     POST /api/v1/bot/remove HTTP/1.1
+     Content-Type: application/json
+     Accept: application/json
+     Body: { "bot_username": "username", "bot_password": "password" }
      ``` 
      В случае успеха возврашается сообщение:
      ```json
@@ -457,8 +466,4 @@ API данного видеосервиса организовано следу�
      * Bot removing error! - Произошла ошибка удаления бота. При данной ошибке в сообщении есть exception с информацией о том, что именно пошло не так. (пока так, пока не будет переписано api на neo4j)
 
 # GraphQL
-Модуль учета лицензий – сбор, регистрация и управление данными о лицензиях, контроль сроков действия и активации лицензий.
-Модуль контроля соответствия – мониторинг соблюдения лицензионных соглашений, выявление случаев несанкционированного использования ПО.Ф
-Модуль управления пользователями – настройка доступа и прав пользователей, управление учетными записями лицензиатов и администраторов.
-Модуль взаимодействия с клиентами – прием заявок на лицензии, обработка запросов, предоставление информации о статусе лицензий.
-Модуль базы данных – хранение информации о лицензиях, пользователях, программных продуктах и их версиях, обеспечение резервного копирования.
+Это еще не реализовано.

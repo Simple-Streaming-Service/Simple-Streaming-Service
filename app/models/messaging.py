@@ -2,10 +2,8 @@ import datetime
 
 from neomodel import RelationshipFrom, DateTimeProperty, StringProperty, StructuredNode
 
-from app.models.account import User
-
 
 class Message(StructuredNode):
-    user = RelationshipFrom(User, "Author")
+    user = RelationshipFrom("app.models.account.User", "AUTHOR")
     timestamp = DateTimeProperty(default=datetime.datetime.now)
     content = StringProperty(required=True)

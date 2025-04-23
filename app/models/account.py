@@ -1,33 +1,34 @@
-from neomodel import StructuredNode, StringProperty, EmailProperty, BooleanProperty, RelationshipTo, RelationshipFrom
+from neomodel import StructuredNode, StringProperty, EmailProperty, BooleanProperty, RelationshipFrom, \
+    RelationshipTo
 
 
 class User(StructuredNode):
     username = StringProperty(required=True, unique=True)
     password = StringProperty(required=True)
     email = EmailProperty(required=True, unique=True)
+    profile = RelationshipTo("app.models.account.StreamingProfile", "LINKED")
+    bot = RelationshipFrom("app.models.account.Bot", "LINKED")
 
-from app.models.messaging import Message
-from app.models.service import FrontendChatService
+    bot_author = RelationshipTo("app.models.account.Bot", "AUTHOR")
 
 class StreamingProfile(StructuredNode):
-    user = RelationshipFrom(User, "User")
+    user = RelationshipFrom("app.models.account.User", "LINKED")
     token = StringProperty(required=True, unique=True)
     withCredentials = BooleanProperty(default=False)
 
     # Settings
     stream_name = StringProperty(required=True)
-    services = RelationshipFrom(FrontendChatService, "Service")
+    services = RelationshipFrom("app.models.service.FrontendChatService", "USED")
 
     # Data
-    subscriptions = RelationshipTo(User, "Subscriber")
+    subscribers = RelationshipFrom("app.models.account.User", "SUBSCRIBED")
     # viewers = RelationshipTo(User, "Viewer")
-    messages = RelationshipTo(Message, "Message")
+    messages = RelationshipFrom("app.models.messaging.Message", "MESSAGES")
 
 
 class Bot(StructuredNode):
-    user = RelationshipTo(User, "User")
     token = StringProperty(required=True, unique=True)
-
-    creator = RelationshipFrom(User, "Creator")
+    user = RelationshipTo("app.models.account.User", "LINKED")
+    creator = RelationshipFrom("app.models.account.User", "AUTHOR")
 
 
