@@ -1,5 +1,7 @@
 import base64
 import re
+from enum import Enum
+
 import strawberry
 from datetime import datetime
 from typing import Optional, List
@@ -24,7 +26,7 @@ class FrontendChatServiceData:
 
 
 @strawberry.enum(description="Ordering options")
-class Order:
+class Order(Enum):
     ASCENDING = "ASCENDING"
     DESCENDING = "DESCENDING"
 
@@ -43,7 +45,7 @@ class MessageData:
 @strawberry.type(description="Stream Metadata")
 class StreamData:
     stream_name: Optional[str]
-    viewers: Optional[int]
+    viewer_count: Optional[int]
 
     @strawberry.field
     def services(

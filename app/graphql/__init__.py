@@ -3,7 +3,7 @@ import strawberry
 from typing import Optional, List, AsyncGenerator
 from datetime import datetime
 
-from app.api.graphql.models import (
+from app.graphql.models import (
     UserData,
     BotData,
     StreamingProfileData,

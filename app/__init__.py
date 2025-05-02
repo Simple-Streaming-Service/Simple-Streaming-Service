@@ -12,7 +12,7 @@ def create_app(config_class=Config):
     app.config.from_object(config_class)
 
     # Initialize Flask extensions here
-    load_neo4j(app.config)
+    load_neo4j(app.config['NEO4J_URI'])
     csrf.init_app(app)
 
     # Register blueprints here
@@ -25,5 +25,5 @@ def create_app(config_class=Config):
 
     return app
 
-def load_neo4j(config):
-    db.set_connection(url=config['NEO4J_URI'])
+def load_neo4j(uri):
+    db.set_connection(url=uri)

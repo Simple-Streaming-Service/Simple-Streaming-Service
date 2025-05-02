@@ -4,7 +4,7 @@ from flask import render_template, current_app
 
 from app.main import bp
 from app.models.account import User
-from app.services.user import is_authenticated, get_current_user
+from app.services.user import is_authenticated, get_current_user, get_user
 
 
 @bp.get("/<streamer>")
@@ -37,3 +37,12 @@ def stream_chat(streamer):
         streamer=user.username,
         chat_initializer=str.join("\n", [service.initializer_code for service in streamer.services]),
         chat_converter=str.join("\n", [service.converter_code for service in streamer.services]))
+
+
+@bp.context_processor
+def utility_processor():
+    return dict(
+        is_authenticated=is_authenticated,
+        get_current_user=get_current_user,
+        get_user=get_user
+    )
