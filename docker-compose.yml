@@ -31,8 +31,29 @@ services:
             DB_USERNAME: ${DB_USERNAME}
             DB_PASSWORD: ${DB_PASSWORD}
             DB_NAME: ${DB_NAME}
-        build: .
-        command: ./boot.sh
+        build:
+            context: .
+            dockerfile: DockerfileFlask
+        command: ./flask_boot.sh
+        network_mode: host
+    graphql-app:
+        depends_on:
+            - db
+        environment:
+            MTX_API_HOST: ${MTX_API_HOST}
+            MTX_API_HOST_PORT: ${MTX_API_HOST_PORT}
+            MTX_LIVE_HOST: ${MTX_LIVE_HOST}
+            MTX_LIVE_HOST_PORT: ${MTX_LIVE_HOST_PORT}
+            DB_HOST: ${DB_HOST}
+            DB_PORT: ${DB_PORT}
+            SECRET_KEY: ${SECRET_KEY}
+            DB_USERNAME: ${DB_USERNAME}
+            DB_PASSWORD: ${DB_PASSWORD}
+            DB_NAME: ${DB_NAME}
+        build:
+            context: .
+            dockerfile: DockerfileGraphQL
+        command: ./graphql_boot.sh
         network_mode: host
     nginx:
         image: nginx:alpine

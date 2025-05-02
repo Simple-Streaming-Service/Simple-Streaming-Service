@@ -6,11 +6,13 @@ from app.main import bp
 from app.models.account import User, Bot
 
 
-def is_authenticated() -> bool:
-    return get_current_user() is not None
+def is_authenticated(args : Headers=None, content=session) -> bool:
+    return get_current_user(args, content) is not None
 
-def get_current_user(args : Headers=None) -> User or None:
-    user = session.get('user', None)
+def get_current_user(args : Headers=None, content=session) -> User or None:
+    user = None
+    if content:
+        user = content.get('user', None)
     if user is None:
         if args is None: return None
         token = args.get("X-Api-Key", None)

@@ -81,19 +81,20 @@ class Subscription:
         profile.viewer_count += 1
         try:
             while True:
-                data = await updated_messages.get()
-                if data[0] != profile:
-                    continue
-                msgs = [
-                    msg for msg in data[1]
-                    if (not start_timestamp or start_timestamp <= msg.timestamp) and
-                       (not end_timestamp or msg.timestamp <= end_timestamp)
-                ]
-                reverse = order == Order.ASCENDING
-                msgs = sorted(msgs, key=lambda m: m.timestamp, reverse=not reverse)
-                if limit:
-                    msgs = msgs[:limit]
-                yield msgs
+                pass
+            #     data = []
+            #     if data[0] != profile:
+            #         continue
+            #     msgs = [
+            #         msg for msg in data[1]
+            #         if (not start_timestamp or start_timestamp <= msg.timestamp) and
+            #            (not end_timestamp or msg.timestamp <= end_timestamp)
+            #     ]
+            #     reverse = order == Order.ASCENDING
+            #     msgs = sorted(msgs, key=lambda m: m.timestamp, reverse=not reverse)
+            #     if limit:
+            #         msgs = msgs[:limit]
+            #     yield msgs
         finally:
             profile.viewer_count -= 1
 

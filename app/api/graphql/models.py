@@ -120,7 +120,7 @@ class StreamingProfileData:
     @strawberry.field
     def token(self, info: Info) -> Optional[str]:
         user = self.user.single()
-        if user != get_current_user(info.context["request"].headers):
+        if user != get_current_user(info.context["request"].headers, None):
             return None
         head = base64.urlsafe_b64encode(user.username.encode()).decode().replace('=', '~')
         return f"{head}?token={self.token}"
@@ -137,7 +137,7 @@ class BotData:
 
     @strawberry.field
     def token(self, info: Info) -> Optional[str]:
-        user = get_current_user(info.context["request"].headers)
+        user = get_current_user(info.context["request"].headers, None)
         bot_user = self.user.single()
         author = self.author.single()
         if user != bot_user and user != author:
@@ -172,7 +172,7 @@ class UserData:
 
     @strawberry.field
     def password(self, info: Info) -> Optional[str]:
-        user = get_current_user(info.context["request"].headers)
+        user = get_current_user(info.context["request"].headers, None)
         if user != self:
             return None
         return self.password
