@@ -1,89 +1,178 @@
 import base64
-import datetime
-
-from graphene import ObjectType, String, Int, DateTime, Field, List, Enum
+import re
+import strawberry
+from datetime import datetime
+from typing import Optional, List
+from strawberry.types import Info
 
 from app.services.user import get_current_user
 
 
-class Order(Enum):
-    ASCENDING = 1
-    DESCENDING = -1
+query_pattern = re.compile(
+    r":(?P<type>\w+) (?P<query>.*?) ?(?=:)",
+    re.RegexFlag.S | re.RegexFlag.IGNORECASE
+)
 
-class MessageData(ObjectType):
-    author = String(description="Message Author")
-    timestamp = DateTime(description="Message Timestamp")
-    content = String(description="Message Content")
 
-    def resolve_author(parent, info):
-        return parent.author.single().username
+@strawberry.type(description="Service Metadata for Chat Frontend")
+class FrontendChatServiceData:
+    name: Optional[str]
+    description: Optional[str]
+    author: Optional[str]
+    initializer_code: Optional[str]
+    receiver_code: Optional[str]
 
-class StreamData(ObjectType):
-    stream_name = String(description="Stream Name")
-    viewers = Int(description="Stream Viewer Count")
 
-class StreamingProfileData(ObjectType):
-    token = String(description="Streamer Token")
-    subscribers = Int(description="Streamer Subscriber Count")
+@strawberry.enum(description="Ordering options")
+class Order:
+    ASCENDING = "ASCENDING"
+    DESCENDING = "DESCENDING"
 
-    messages = List(MessageData, description="Streamer Messages",
-                    start_timestamp=DateTime(description="Messages Start Timestamp"),
-                    end_timestamp=DateTime(description="Messages End Timestamp"),
-                    limit=Int(description="Messages Limit"),
-                    order=Order(description="Messages Order", required=True))
-    stream = Field(StreamData, description="Stream Data")
 
-    def resolve_token(parent, info):
-        user = parent.user.single()
-        if user != get_current_user(): return None
-        head = base64.urlsafe_b64encode(user.username.encode()).decode().replace('=', '~')
-        return f"{head}?token={parent.token}"
+@strawberry.type(description="Message Structure")
+class MessageData:
+    author: Optional[str]
+    timestamp: Optional[datetime]
+    content: Optional[str]
 
-    def resolve_subscribers(parent, info):
-        return len(parent.subscribers.all())
+    @strawberry.field
+    def author(self, info: Info) -> Optional[str]:
+        return self.author.single().username
 
-    def resolve_messages(parent, info, **args):
-        print(args, flush=True)
-        messages = [
-            msg for msg in parent.messages.all()
-            if ("start_timestamp" not in args or args["start_timestamp"] <= msg.timestamp)
-            and ("end_timestamp" not in args or msg.timestamp <= args["end_timestamp"])
+
+@strawberry.type(description="Stream Metadata")
+class StreamData:
+    stream_name: Optional[str]
+    viewers: Optional[int]
+
+    @strawberry.field
+    def services(
+        self,
+        info: Info,
+        query: Optional[str] = None
+    ) -> List[FrontendChatServiceData]:
+        if query:
+            parsed = ":any " + query + ":"
+            parsed = query_pattern.finditer(parsed)
+            query_dict = {
+                match.group("type"): match.group("query") for match in parsed
+            }
+            query_any = query_dict.get("any", "")
+            result = []
+
+            result += self.services.filter(
+                name__contains=query_any,
+                description__contains=query_any,
+                author__username__contains=query_any,
+            ).all()
+
+            if "name" in query_dict:
+                result += self.services.filter(
+                    name__contains=query_dict["name"],
+                    description__contains=query_any,
+                    author__username__contains=query_any,
+                ).all()
+            if "description" in query_dict:
+                result += self.services.filter(
+                    name__contains=query_any,
+                    description__contains=query_dict["description"],
+                    author__username__contains=query_any,
+                ).all()
+            if "author" in query_dict:
+                result += self.services.filter(
+                    name__contains=query_any,
+                    description__contains=query_any,
+                    author__username__contains=query_dict["author"],
+                ).all()
+
+            return list(set(result))
+        else:
+            return self.services.all()
+
+
+@strawberry.type(description="Streamer Profile Data")
+class StreamingProfileData:
+    token: Optional[str]
+    subscribers: Optional[int]
+
+    @strawberry.field
+    def messages(
+        self,
+        info: Info,
+        start_timestamp: Optional[datetime] = None,
+        end_timestamp: Optional[datetime] = None,
+        limit: Optional[int] = None,
+        order: Order = Order.DESCENDING,
+    ) -> List[MessageData]:
+        filtered = [
+            msg for msg in self.messages.all()
+            if (not start_timestamp or start_timestamp <= msg.timestamp) and
+               (not end_timestamp or msg.timestamp <= end_timestamp)
         ]
-        messages = sorted(messages, key=lambda x: x.timestamp, reverse=args["order"]==-1)
-        if "limit" in args:
-            messages = messages[:args["limit"]]
-        return messages
+        reverse = order == Order.ASCENDING
+        sorted_msgs = sorted(filtered, key=lambda m: m.timestamp, reverse=not reverse)
+        return sorted_msgs[:limit] if limit else sorted_msgs
 
-    def resolve_stream(parent, info):
-        return dict(
-            stream_name = parent.stream_name,
-            viewers = 0 # TODO: Viewer counting
-        )
+    @strawberry.field
+    def stream(self, info: Info) -> Optional[StreamData]:
+        return self
 
-class BotData(ObjectType):
-    token = String(description="Streamer Email")
-    author = String( description="Bot Author")
+    @strawberry.field
+    def token(self, info: Info) -> Optional[str]:
+        user = self.user.single()
+        if user != get_current_user(info.context["request"].headers):
+            return None
+        head = base64.urlsafe_b64encode(user.username.encode()).decode().replace('=', '~')
+        return f"{head}?token={self.token}"
+
+    @strawberry.field
+    def subscribers(self, info: Info) -> int:
+        return len(self.subscribers.all())
 
 
-    def resolve_author(parent, info):
-        return parent.author.single().username
+@strawberry.type(description="Bot Information")
+class BotData:
+    token: Optional[str]
+    author: Optional[str]
 
-class UserData(ObjectType):
-    username = String(description="User Username")
-    email = String(description="User Email")
-    password = String(description="User Password")
-    subscriptions = List(String, description="List of Subscriptions")
-    profile = Field(StreamingProfileData, description="Streaming Profile Data")
-    bot = Field(BotData, description="Bot Data")
+    @strawberry.field
+    def token(self, info: Info) -> Optional[str]:
+        user = get_current_user(info.context["request"].headers)
+        bot_user = self.user.single()
+        author = self.author.single()
+        if user != bot_user and user != author:
+            return None
+        return self.token
 
-    def resolve_subscriptions(parent, info):
+    @strawberry.field
+    def author(self, info: Info) -> Optional[str]:
+        return self.author.single().username
+
+
+@strawberry.type(description="User Data")
+class UserData:
+    username: Optional[str]
+    email: Optional[str]
+    password: Optional[str]
+
+    @strawberry.field
+    def subscriptions(self, info: Info) -> List[str]:
         return [
             streamer.user.single().username
-            for streamer in parent.subscriptions.all()
+            for streamer in self.subscriptions.all()
         ]
 
-    def resolve_profile(parent, info):
-        return parent.profile.single()
+    @strawberry.field
+    def profile(self, info: Info) -> StreamingProfileData:
+        return self.profile.single()
 
-    def resolve_bot(parent, info):
-        return parent.bot.single()
+    @strawberry.field
+    def bot(self, info: Info) -> BotData:
+        return self.bot.single()
+
+    @strawberry.field
+    def password(self, info: Info) -> Optional[str]:
+        user = get_current_user(info.context["request"].headers)
+        if user != self:
+            return None
+        return self.password

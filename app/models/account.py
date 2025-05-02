@@ -1,5 +1,5 @@
 from neomodel import StructuredNode, StringProperty, EmailProperty, BooleanProperty, RelationshipFrom, \
-    RelationshipTo
+    RelationshipTo, IntegerProperty
 
 
 class User(StructuredNode):
@@ -23,8 +23,10 @@ class StreamingProfile(StructuredNode):
     services = RelationshipFrom("app.models.service.FrontendChatService", "USED")
 
     # Data
+    viewer_count = IntegerProperty(default=0)
+    moderators = RelationshipFrom("app.models.account.User", "MODERATING")
+    banned = RelationshipFrom("app.models.account.User", "BANNED")
     subscribers = RelationshipFrom("app.models.account.User", "SUBSCRIBED")
-    # viewers = RelationshipFrom("app.models.account.User", "VIEWER")
     messages = RelationshipFrom("app.models.messaging.Message", "MESSAGE")
 
 

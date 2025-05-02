@@ -27,7 +27,7 @@ def subscribe(streamer):
     if not streamer: return {"ok": False, "error": "Streamer does not exist!"}
     user = get_current_user(request.headers)
     if not user: return {"ok": False, "error": "User not authorized!"}
-    streamer.subscribers.disconnect(user)
+    streamer.subscribers.connect(user)
 
     return {"ok": True, "msg": "Subscribed!"}
 
@@ -37,41 +37,15 @@ def unsubscribe(streamer):
     if not streamer: return {"ok": False, "error": "Streamer does not exist!"}
     user = get_current_user(request.headers)
     if not user: return {"ok": False, "error": "User not authorized!"}
-
-    user.subscribers.remove(streamer)
-    user.save()
-
-    streamer.subscribers.remove(user)
-    streamer.save()
+    streamer.subscribers.disconnect(user)
     return {"ok": True, "msg": "Unsubscribed!"}
 
-
-@bp.post("/stream/<streamer>/viewers/connect")
-def view_connect(streamer):
-    streamer = find_streamer(streamer)
-    if not streamer: return {"ok": False, "error": "Streamer does not exist!"}
-    user = get_current_user(request.headers)
-    if not user: return {"ok": False, "error": "User not authorized!"}
-    streamer.viewers.append(user)
-    streamer.viewers = list(set(streamer.viewers))
-    streamer.save()
-    return {"ok": True, "msg": "Connected!"}
-
-@bp.post("/stream/<streamer>/viewers/disconnect")
-def view_disconnect(streamer):
-    streamer = find_streamer(streamer)
-    if not streamer: return {"ok": False, "error": "Streamer does not exist!"}
-    user = get_current_user(request.headers)
-    if not user: return {"ok": False, "error": "User not authorized!"}
-    streamer.viewers.remove(user)
-    streamer.save()
-    return {"ok": True, "msg": "Disconnected!"}
 
 @bp.get("/stream/<streamer>/viewers/count")
 def view_count(streamer):
     streamer = find_streamer(streamer)
     if not streamer: return {"ok": False, "error": "Streamer does not exist!"}
-    return {"ok": True, "count": len(streamer.viewers)}
+    return {"ok": True, "count": streamer.viewer_count}
 
 
 @bp.get("/stream/<streamer>/chat/list")
