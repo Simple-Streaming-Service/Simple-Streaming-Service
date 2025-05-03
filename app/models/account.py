@@ -6,8 +6,8 @@ class User(StructuredNode):
     username = StringProperty(required=True, unique=True)
     password = StringProperty(required=True)
     email = EmailProperty(required=True, unique=True)
-    subscriptions = RelationshipTo("app.models.account.StreamingProfile", "SUBSCRIBED")
 
+    subscriptions = RelationshipTo("app.models.account.StreamingProfile", "SUBSCRIBED")
     profile = RelationshipTo("app.models.account.StreamingProfile", "LINKED")
     bot = RelationshipFrom("app.models.account.Bot", "LINKED")
 

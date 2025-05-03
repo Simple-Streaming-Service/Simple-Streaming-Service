@@ -26,6 +26,10 @@ class FrontendChatServiceData:
     formatting_code: str
     style: str
 
+    @strawberry.field
+    def author(self, info: Info) -> Optional[str]:
+        return self.author.single().username
+
 
 @strawberry.enum(description="Ordering options")
 class Order(Enum):

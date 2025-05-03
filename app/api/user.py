@@ -38,6 +38,11 @@ def logout():
 def create_user():
     csrf.protect()
 
+    if User.nodes.first_or_none(username=session['user']):
+        return {"ok": False, "error": "User with this username already exists!"}
+    if User.nodes.first_or_none(email=session['email']):
+        return {"ok": False, "error": "User with this email already exists!"}
+
     data = json.loads(request.data)
     try:
         user = User(
@@ -69,6 +74,8 @@ def update_user_username():
     user = get_current_user(request.headers)
     if not user: return {"ok": False, "error": "User not authorized!"}
     try:
+        if User.nodes.first_or_none(username=session['user']):
+            return {"ok": False, "error": "User with this username already exists!"}
         user.username = data["username"]
         user.save()
     except Exception as e:
@@ -82,6 +89,8 @@ def update_user_email():
     user = get_current_user(request.headers)
     if not user: return {"ok": False, "error": "User not authorized!"}
     try:
+        if User.nodes.first_or_none(email=session['email']):
+            return {"ok": False, "error": "User with this email already exists!"}
         user.email = data["email"]
         user.save()
     except Exception as e:
@@ -100,11 +109,11 @@ def create_profile():
 
         while True:
             token = random.randbytes(10).hex()
-            if len(StreamingProfile.nodes.filter(token=token)) == 0:
+            if StreamingProfile.nodes.first_or_none(token=token) is None:
                 break
 
         streamer = StreamingProfile(
-            stream_name=data["stream_name"],
+            stream_name=data.get("stream_name", "My first stream"),
             token=token,
         )
         streamer.save()
@@ -130,7 +139,7 @@ def regenerate_token():
 
     while True:
         token = random.randbytes(10).hex()
-        if len(StreamingProfile.nodes.filter(token=token)) == 0:
+        if StreamingProfile.nodes.first_or_none(token=token) is None:
             break
 
     profile.token = token
@@ -178,7 +187,7 @@ def add_profile_services():
         if not service: return {"ok": False, "error": "Service does not exist!"}
         profile = user.profile.single()
         if not profile: return {"ok": False, "error": "Streamer does not exist!"}
-        profile.services.append(service)
+        profile.services.connect(service)
         profile.save()
     except Exception as e:
         return {"ok": False, "error": "Stream service adding error!", "exception": str(e)}
@@ -196,7 +205,7 @@ def remove_profile_services():
         if not service: return {"ok": False, "error": "Service does not exist!"}
         profile = user.profile.single()
         if not profile: return {"ok": False, "error": "Streamer does not exist!"}
-        profile.services.remove(service)
+        profile.services.disconnect(service)
         profile.save()
     except Exception as e:
         return {"ok": False, "error": "Stream service removing error!", "exception": str(e)}
@@ -210,7 +219,7 @@ def sub_count():
 
     return {
         "ok": True,
-        "subscriptions": [subscription.user.username for subscription in user.subscribers]
+        "subscriptions": [subscription.user.username for subscription in user.subscriptions.all()]
     }
 
 @bp.get("/user/bots")

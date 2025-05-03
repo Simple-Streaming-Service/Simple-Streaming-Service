@@ -36,6 +36,8 @@ def upload_service(name : str):
     if not user: return {"ok": False, "error": "User not authorized!"}
     data = dict(json.loads(request.data))
     try:
+        if FrontendChatService.nodes.first_or_none(name=name):
+            return {"ok": False, "error": "Service with this name already exists!"}
         service = FrontendChatService(
             name=name,
             description=data["description"],
