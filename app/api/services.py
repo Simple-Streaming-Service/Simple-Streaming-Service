@@ -23,7 +23,7 @@ def services_get(name : str):
         "service":{
             "name": service.name,
             "description": service.description,
-            "author": service.author.single(),
+            "author": service.author.single().username,
             "initializer_code": service.initializer_code,
             "formatter_code": service.formatting_code,
             "style": service.style
@@ -41,7 +41,7 @@ def upload_service(name : str):
             description=data["description"],
             initializer_code=data.get("initializer_code", ""),
             formatting_code=data.get("formatting_code", ""),
-            styles=data.get("styles", "")
+            style=data.get("style", "")
         )
         service.save()
         service.author.connect(user)

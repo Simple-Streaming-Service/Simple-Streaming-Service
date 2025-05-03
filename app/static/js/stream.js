@@ -1,11 +1,11 @@
-import markdownIt from 'https://cdn.jsdelivr.net/npm/markdown-it@14.1.0/+esm'
+
 
 
 const chat_root = document.getElementById('messages');
 const message_text = document.getElementById('message-text');
 
-window.init_chat = (initializer) => {
-    initializer(window);
+window.init_chat = (initializer, formatter) => {
+
 }
 
 window.send_message = (streamer) => {
@@ -24,7 +24,7 @@ window.send_message = (streamer) => {
 }
 
 const startStamp = Math.trunc(Date.now() / 1000);
-window.update_chat = (streamer, formatter) => {
+window.update_chat = (streamer) => {
     fetch(`/api/v1/stream/${streamer}/chat/list?start_timestamp=${startStamp}&end_timestamp=${Math.trunc(Date.now() / 1000)}&limit=50`, {
         method: 'GET'
     }).then(response => {

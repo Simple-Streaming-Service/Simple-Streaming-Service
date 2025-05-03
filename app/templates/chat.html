@@ -12,6 +12,13 @@
     <style>
         {{ chat_styles }}
     </style>
+    <script type="module">
+        window.formatter = (window, msg) => {
+            {{ chat_formatter|safe }}
+            return msg;
+        };
+        {{ chat_initializer|safe }}
+    </script>
 	 <div class='chat'>
             <div class='chat-messages'>
                 <div class='chat-messages__content' id='messages'>
@@ -27,6 +34,6 @@
                 {% endif %}
             </div>
             <script type="module" src="{{ url_for('static', filename='js/stream.js') }}"
-                    onload="init_chat((window) => { {{ chat_initializer }} }); update_chat('{{ streamer }}', (window, msg) => { {{ chat_formatter }} return msg; })"></script>
+                    onload="update_chat('{{ streamer }}')"></script>
      </div>
 {% endblock %}
