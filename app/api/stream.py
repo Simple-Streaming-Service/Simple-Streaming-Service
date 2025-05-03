@@ -5,8 +5,7 @@ from flask import request, json
 from app.api import bp
 from app.models.account import User, StreamingProfile
 from app.models.messaging import Message
-from app.services.user import get_current_user, get_user
-
+from app.services.user import get_current_user, get_user, find_streamer
 
 
 @bp.get("/stream/<streamer>/subscribers/contains")
@@ -97,7 +96,3 @@ def msg_send(streamer):
     msg.author.connect(user)
     streamer.messages.connect(msg)
     return {"ok": True, "msg": "Message sent!", "timestamp": timestamp}
-
-def find_streamer(streamer):
-    user = User.nodes.first_or_none(username=streamer)
-    return user.profile.single()

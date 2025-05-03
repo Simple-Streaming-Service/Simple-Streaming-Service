@@ -1,11 +1,11 @@
 from flask import session
-from app.models.account import User, Bot
+from app.models.account import User, Bot, StreamingProfile
 
 
 def is_authenticated(args=None, content=session) -> bool:
     return get_current_user(args, content) is not None
 
-def get_current_user(args=None, content=session) -> User or None:
+def get_current_user(args=None, content=session) -> User | None:
     user = None
     if content:
         user = content.get('user', None)
@@ -23,3 +23,7 @@ def get_user(args) -> User or None:
     if "user" not in args:
         return None
     return User.nodes.first_or_none(username=args["user"])
+
+def find_streamer(streamer) -> StreamingProfile:
+    user = User.nodes.first_or_none(username=streamer)
+    return user.profile.single()
