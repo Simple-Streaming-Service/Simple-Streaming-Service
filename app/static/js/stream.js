@@ -1,14 +1,14 @@
 import markdownIt from 'https://cdn.jsdelivr.net/npm/markdown-it@14.1.0/+esm'
 
-const md = markdownIt();
+
 const chat_root = document.getElementById('messages');
 const message_text = document.getElementById('message-text');
 
 window.init_chat = (initializer) => {
-    initializer(md);
+    initializer(window);
 }
 
-window.send_request = (streamer) => {
+window.send_message = (streamer) => {
     fetch(`/api/v1/stream/${streamer}/chat/send`, {
         method: 'POST',
         body: JSON.stringify({
@@ -24,7 +24,7 @@ window.send_request = (streamer) => {
 }
 
 const startStamp = Math.trunc(Date.now() / 1000);
-window.update_chat = (streamer) => {
+window.update_chat = (streamer, formatter) => {
     fetch(`/api/v1/stream/${streamer}/chat/list?start_timestamp=${startStamp}&end_timestamp=${Math.trunc(Date.now() / 1000)}&limit=50`, {
         method: 'GET'
     }).then(response => {
@@ -34,7 +34,7 @@ window.update_chat = (streamer) => {
                 chat.messages.forEach(message => {
                     const div = document.createElement("p");
                     div.className = "chat__message";
-                    div.innerHTML = `${message.user}: ${md.render(message.content)}`;
+                    div.innerHTML = `${message.user}: ${formatter(window, message.content)}`;
                     chat_root.append(div);
                 })
                 if (chat_root.children.length > 0)

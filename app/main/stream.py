@@ -36,7 +36,8 @@ def stream_chat(streamer):
         user=get_current_user(),
         streamer=user.username,
         chat_initializer=str.join("\n", [service.initializer_code for service in streamer.services]),
-        chat_converter=str.join("\n", [service.formatting_code for service in streamer.services]))
+        chat_formatter=str.join("\n", [service.formatting_code for service in streamer.services]),
+        chat_styles=str.join("\n", [service.style for service in streamer.services]))
 
 
 @bp.context_processor

@@ -7,4 +7,5 @@ class FrontendChatService(StructuredNode):
     author = RelationshipFrom("app.models.account.User", "AUTHOR")
 
     initializer_code = StringProperty(required=True)
-    formatter_code = StringProperty(required=True)
+    formatting_code = StringProperty(required=True)
+    style = StringProperty(required=True)

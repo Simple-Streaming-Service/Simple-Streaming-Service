@@ -25,7 +25,8 @@ def services_get(name : str):
             "description": service.description,
             "author": service.author.single(),
             "initializer_code": service.initializer_code,
-            "formatter_code": service.formatting_code
+            "formatter_code": service.formatting_code,
+            "style": service.style
         }
     }
 
@@ -39,7 +40,8 @@ def upload_service(name : str):
             name=name,
             description=data["description"],
             initializer_code=data.get("initializer_code", ""),
-            formatting_code=data.get("formatting_code", "")
+            formatting_code=data.get("formatting_code", ""),
+            styles=data.get("styles", "")
         )
         service.save()
         service.author.connect(user)
@@ -131,6 +133,20 @@ def update_service_converter_code(name : str):
     service.formatting_code = data["code"]
     service.save()
     return {"ok": True, "msg": "Service formatting code updated successfully!"}
+
+@bp.patch("services/<name>/code/style")
+def update_service_style(name : str):
+    user = get_current_user(request.headers)
+    if not user: return {"ok": False, "error": "User not authorized!"}
+    service = FrontendChatService.nodes.first_or_none(name=name)
+    if service is None:
+        return {"ok": False, "error": "Service not found!"}
+    if user not in service.author:
+        return {"ok": False, "error": "You are not author of this service!"}
+    data = dict(json.loads(request.data))
+    service.style = data["code"]
+    service.save()
+    return {"ok": True, "msg": "Service style updated successfully!"}
 
 @bp.post("services/<name>/subscribe")
 def subscribe_service(name : str):

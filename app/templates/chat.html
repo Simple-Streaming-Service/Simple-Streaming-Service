@@ -9,6 +9,9 @@
 {% endblock %}
 
 {% block minimalistic_content %}
+    <style>
+        {{ chat_styles }}
+    </style>
 	 <div class='chat'>
             <div class='chat-messages'>
                 <div class='chat-messages__content' id='messages'>
@@ -17,13 +20,13 @@
             </div>
             <div class='chat-input'>
                 {% if authenticated  %}
-                    <form method='post' id='chat-form' onsubmit="send_request('{{ streamer }}'); return false;">
-                        <textarea id='message-text' class='chat-form__input' placeholder='Введите сообщение' onkeypress='if (event.key === "Enter" && !event.shiftKey) {event.preventDefault();send_request("{{ streamer }}");}'></textarea>
+                    <form method='post' id='chat-form' onsubmit="send_message('{{ streamer }}'); return false;">
+                        <textarea id='message-text' class='chat-form__input' placeholder='Введите сообщение' onkeypress='if (event.key === "Enter" && !event.shiftKey) {event.preventDefault();send_message("{{ streamer }}");}'></textarea>
                         <input type='submit' class='chat-form__submit' value='Send'>
                     </form>
                 {% endif %}
             </div>
             <script type="module" src="{{ url_for('static', filename='js/stream.js') }}"
-                    onload="init_chat((md) => { {{ chat_initializer }} }); update_chat('{{ streamer }}')"></script>
+                    onload="init_chat((window) => { {{ chat_initializer }} }); update_chat('{{ streamer }}', (window, msg) => { {{ chat_formatter }} return msg; })"></script>
      </div>
 {% endblock %}

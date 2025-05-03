@@ -23,7 +23,8 @@ class FrontendChatServiceData:
     description: str
     author: str
     initializer_code: str
-    receiver_code: str
+    formatting_code: str
+    style: str
 
 
 @strawberry.enum(description="Ordering options")
