@@ -1,9 +1,10 @@
 import hashlib
 import random
+from datetime import datetime
 
 from flask import request, json, session
 
-from app.api import bp
+from app.api import bp, user
 from app.models.account import User, Bot
 from app.services.user import get_current_user
 
@@ -12,8 +13,12 @@ from app.services.user import get_current_user
 def bot_auth():
     bot = Bot.nodes.first_or_none(token=request.headers.get("X-Api-Key", None))
     if not bot: return {"ok": False, "error": "Bot not exists!"}
-
-    session['user'] = bot.user.username
+    bot_user = bot.user.single()
+    if bot_user.revoked_at is not None:
+        return {"ok": False, "error": "User banned!"}
+    session['user'] = bot_user.username
+    bot_user.last_login = datetime.now()
+    bot_user.save()
     return {"ok": True, "msg": "Bot log in successfully!"}
 
 @bp.post("/bot/exit")

@@ -1,11 +1,17 @@
 from neomodel import StructuredNode, StringProperty, EmailProperty, BooleanProperty, RelationshipFrom, \
-    RelationshipTo, IntegerProperty
+    RelationshipTo, IntegerProperty, DateTimeProperty
 
 
 class User(StructuredNode):
     username = StringProperty(required=True, unique=True)
     password = StringProperty(required=True)
     email = EmailProperty(required=True, unique=True)
+
+    created_at = DateTimeProperty(default_now=True)
+    last_login = DateTimeProperty(default_now=True)
+    revoked_at = DateTimeProperty(default=None)
+    revoked_by = RelationshipFrom("app.models.account.User", "REVOKE")
+
 
     subscriptions = RelationshipTo("app.models.account.StreamingProfile", "SUBSCRIBED")
     profile = RelationshipTo("app.models.account.StreamingProfile", "LINKED")

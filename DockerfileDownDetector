@@ -1,0 +1,13 @@
+FROM python:slim
+
+COPY requirements_downdetector.txt requirements_downdetector.txt
+RUN pip install -r requirements_downdetector.txt
+
+COPY downdetector ./downdetector
+COPY config.py ./
+COPY downdetector.py ./
+
+ENV FLASK_APP downdetector.py
+
+EXPOSE 5000
+CMD ["python", "downdetector.py"]

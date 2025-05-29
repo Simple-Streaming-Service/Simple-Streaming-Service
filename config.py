@@ -24,3 +24,7 @@ class Config:
     DB_NAME = os.getenv("DB_NAME", "video_service")
     MONGO_URI = f"mongodb://{DB_USERNAME}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}?authSource=admin"
     NEO4J_URI = f"bolt://{DB_USERNAME}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}"
+
+    TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
+    FLASK_API_TIMEOUT = os.getenv("FLASK_API_TIMEOUT", "1000")
+    GRAPHQL_API_TIMEOUT = os.getenv("GRAPHQL_API_TIMEOUT", "1000")

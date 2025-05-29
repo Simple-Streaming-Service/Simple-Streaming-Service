@@ -11,7 +11,7 @@ COPY flask_wsgi.py ./
 
 RUN chmod a+x flask_boot.sh
 
-ENV FLASK_APP app.py
+ENV FLASK_APP flask_wsgi.py
 
 EXPOSE 5000
 ENTRYPOINT ["./flask_boot.sh"]

@@ -1,11 +1,12 @@
 from flask import Flask
 from flask_wtf import CSRFProtect
 from neomodel import db
-
+from apscheduler.schedulers.background import BackgroundScheduler
 
 from config import Config
 
 csrf = CSRFProtect()
+scheduler = BackgroundScheduler()
 
 def create_app(config_class=Config):
     app = Flask(__name__)
@@ -23,6 +24,9 @@ def create_app(config_class=Config):
     app.register_blueprint(api_bp, url_prefix='/api/v1')
     csrf.exempt(api_bp)
 
+    # Scheduler
+    # import app.background
+    # scheduler.start()
     return app
 
 def load_neo4j(uri):

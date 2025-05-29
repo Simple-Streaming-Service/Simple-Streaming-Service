@@ -5,6 +5,7 @@ from flask import request, json
 from app.api import bp
 from app.models.account import User, StreamingProfile
 from app.models.messaging import Message
+from app.services.graphql import make_query
 from app.services.user import get_current_user, get_user, find_streamer
 
 
@@ -87,12 +88,29 @@ def msg_send(streamer):
     timestamp = request.args.get("timestamp", datetime.now().timestamp())
     timestamp = datetime.fromtimestamp(timestamp)
     if "message" not in data: return {"ok": False, "error": "Content field is required!"}
-
-    streamer = find_streamer(streamer)
-    if not streamer: return {"ok": False, "error": "Streamer does not exist!"}
-
-    msg = Message(content=data["message"], timestamp=timestamp)
-    msg.save()
-    msg.author.connect(user)
-    streamer.messages.connect(msg)
-    return {"ok": True, "msg": "Message sent!", "timestamp": timestamp}
+    try:
+        result = make_query(
+            """
+                mutation SendMessage {
+                    sendMessage(streamer: $streamer, message: $message, timestamp: $timestamp) {
+                        ok
+                        error
+                        msg
+                        timestamp
+                    }
+                }
+            """,
+            {
+                "streamer": streamer,
+                "message": data["message"],
+                "timestamp": timestamp.isoformat()
+            },
+            "http://localhost:5001",
+            request.headers
+        )
+        if "ok" in result and result["ok"]:
+            return {"ok": True, "msg": result["msg"] | "Message sent!", "timestamp": timestamp}
+        else:
+            return {"ok": False, "error": result["error"] | "Message sending failed!"}
+    except:
+        return {"ok": False, "error": "Message sending failed!"}

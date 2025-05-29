@@ -1,6 +1,7 @@
 import base64
 import hashlib
 import random
+from datetime import datetime
 
 from flask import request, json, session
 
@@ -23,7 +24,11 @@ def auth():
 
     if user.password != hashlib.sha512(data["password"].encode()).hexdigest():
         return {"ok": False, "error": "Invalid password!"}
+    if user.revoked_at is not None:
+        return {"ok": False, "error": "User banned!"}
     session['user'] = user.username
+    user.last_login = datetime.now()
+    user.save()
     return {"ok": True, "msg": "User log in successfully!"}
 
 @bp.post("/user/exit")
