@@ -9,7 +9,7 @@ body {
 }
 
 .content {
-    margin: 3vh;
+    margin: 0.1vh;
 }
 
 .center {
@@ -95,7 +95,8 @@ body {
 .container {
     width: 70%;
     margin: 0 auto;
-    padding: 0 20px;
+    padding: 20px;
+    padding-bottom: 0px;
     box-sizing: border-box;
     background: var(--nav-color);
 }
@@ -122,6 +123,14 @@ body {
     }
 }
 
+input[type="text"], input[type="password"], input[type="email"], input[type="number"], input[type="url"], input[type="tel"], input[type="search"] {
+    background: var(--button-color);
+    padding: 5px;
+    margin-left: 10px;
+    border-radius: 5px;
+    border: 1px solid var(--nav-border-color);
+}
+
 /* stream card */
 
 .streams {
@@ -136,7 +145,7 @@ body {
   flex-direction: column;
   align-items: center;
   width: fit-content;
-  margin: 20px 0;
+  margin-bottom: 20px;
   padding: 20px;
   background: var(--stream-card-color);
   border-radius: 5px;
@@ -181,6 +190,7 @@ h1 {
 }
 
 .nav {
+    box-shadow: 0 0 10px var(--shadow-color);
     position: sticky;
     display: flex;
     justify-content: space-between;

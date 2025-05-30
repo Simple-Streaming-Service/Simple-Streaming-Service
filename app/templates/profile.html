@@ -1,11 +1,11 @@
-{% extends 'base.html' %}
+{% extends 'default.html' %}
 
 {% block head %}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/user.css') }}">
 {% endblock %}
 
 {% block title %}
-    {{ User }} | Profile
+    {{ user.username }} | Profile
 {% endblock %}
 
 {% block content %}
@@ -104,7 +104,7 @@
         </div>
 
         <div style="height: 50px"></div>
-        {% if is_streamer %}
+        {% if profile %}
             <script type="module" src="{{ url_for('static', filename='js/streamer.js') }}" onload="
                     get_token('{{ url_for('api.get_token') }}');
                     window.stream_name_uri = '{{ url_for('api.update_profile_stream_name') }}';
@@ -175,4 +175,5 @@
             <div class="btn" onclick="log_out('{{ url_for('api.logout') }}', '{{ url_for('main.index') }}', '{{ csrf_token() }}')">Log Out</div>
         </div>
     </div>
+    <div class="after_container"></div>
 {% endblock %}

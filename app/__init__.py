@@ -1,19 +1,20 @@
-from time import sleep
-
 from flask import Flask
 from flask_wtf import CSRFProtect
-from mongoengine import connect, get_connection
+from neomodel import db
+from apscheduler.schedulers.background import BackgroundScheduler
 
 from config import Config
 
 csrf = CSRFProtect()
+scheduler = BackgroundScheduler()
 
 def create_app(config_class=Config):
     app = Flask(__name__)
-    csrf.init_app(app)
     app.config.from_object(config_class)
+
     # Initialize Flask extensions here
-    load_mongo(app)
+    load_neo4j(app.config['NEO4J_URI'])
+    csrf.init_app(app)
 
     # Register blueprints here
     from app.main import bp as main_bp
@@ -23,11 +24,10 @@ def create_app(config_class=Config):
     app.register_blueprint(api_bp, url_prefix='/api/v1')
     csrf.exempt(api_bp)
 
+    # Scheduler
+    # import app.background
+    # scheduler.start()
     return app
 
-def load_mongo(app):
-    client = connect(host=app.config['MONGO_URI'], timeoutms=1000)
-    try:
-        app.logger.info("Connected to MongoDB: {0}", client.admin.command('ping'))
-    except Exception as e:
-        app.logger.info("Connection to MongoDB failed: {0}", e)
+def load_neo4j(uri):
+    db.set_connection(url=uri)

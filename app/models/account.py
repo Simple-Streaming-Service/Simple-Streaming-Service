@@ -1,38 +1,44 @@
-from mongoengine import Document, StringField, EmailField, ReferenceField, ListField, EmbeddedDocumentField, \
-    BooleanField
+from neomodel import StructuredNode, StringProperty, EmailProperty, BooleanProperty, RelationshipFrom, \
+    RelationshipTo, IntegerProperty, DateTimeProperty
 
 
-class StreamingProfile(Document):
-    pass
+class User(StructuredNode):
+    username = StringProperty(required=True, unique=True)
+    password = StringProperty(required=True)
+    email = EmailProperty(required=True, unique=True)
 
-class User(Document):
-    username = StringField(required=True, unique=True)
-    password = StringField(required=True)
-    email = EmailField(required=True, unique=True)
-    subscriptions = ListField(default=[], field=ReferenceField(required=True, document_type=StreamingProfile))
+    created_at = DateTimeProperty(default_now=True)
+    last_login = DateTimeProperty(default_now=True)
+    revoked_at = DateTimeProperty(default=None)
+    revoked_by = RelationshipFrom("app.models.account.User", "REVOKE")
 
-from app.models.messaging import Message
-from app.models.service import FrontendChatService
 
-class StreamingProfile(Document):
-    user = ReferenceField(document_type=User, unique=True, required=True)
-    token = StringField(required=True, unique=True)
-    withCredentials = BooleanField(required=True, default=False)
+    subscriptions = RelationshipTo("app.models.account.StreamingProfile", "SUBSCRIBED")
+    profile = RelationshipTo("app.models.account.StreamingProfile", "LINKED")
+    bot = RelationshipFrom("app.models.account.Bot", "LINKED")
+
+    bots = RelationshipTo("app.models.account.Bot", "AUTHOR")
+
+class StreamingProfile(StructuredNode):
+    user = RelationshipFrom("app.models.account.User", "LINKED")
+    token = StringProperty(required=True, unique=True)
+    withCredentials = BooleanProperty(default=False)
 
     # Settings
-    stream_name = StringField(required=True)
-    services = ListField(default=[], field=ReferenceField(required=True, document_type=FrontendChatService))
+    stream_name = StringProperty(required=True)
+    services = RelationshipFrom("app.models.service.FrontendChatService", "USED")
 
     # Data
-    subscribers = ListField(default=[], field=ReferenceField(required=True, document_type=User))
-    viewers = ListField(default=[], field=ReferenceField(required=True, document_type=User))
-    messages = ListField(default=[], field=EmbeddedDocumentField(required=True, document_type=Message))
+    viewer_count = IntegerProperty(default=0)
+    moderators = RelationshipFrom("app.models.account.User", "MODERATING")
+    banned = RelationshipFrom("app.models.account.User", "BANNED")
+    subscribers = RelationshipFrom("app.models.account.User", "SUBSCRIBED")
+    messages = RelationshipFrom("app.models.messaging.Message", "MESSAGE")
 
 
-class Bot(Document):
-    user = ReferenceField(document_type=User, unique=True, required=True)
-    token = StringField(required=True, unique=True)
-
-    creator = ReferenceField(document_type=User, required=True)
+class Bot(StructuredNode):
+    token = StringProperty(required=True, unique=True)
+    user = RelationshipTo("app.models.account.User", "LINKED")
+    author = RelationshipFrom("app.models.account.User", "AUTHOR")
 
 

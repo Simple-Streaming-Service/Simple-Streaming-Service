@@ -6,20 +6,11 @@
     <title>{% block title %}{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='img/favicon.png') }}">
     {% block head %}{% endblock %}
 </head>
 <body>
-    <div class="nav">
-        <a href="/"><h1 class="logo">Live Streams</h1></a>
-        {% if is_authenticated() %}
-            <a href="{{ url_for('main.user_profile') }}">Profile</a>
-        {% else %}
-            <a href="{{ url_for('main.auth') }}">Sign In</a>
-        {% endif %}
-    </div>
-    <div class="content">
-        {% block content %}{% endblock %}
-    </div>
+    {% block minimalistic_content %}{% endblock %}
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 </body>
 </html>

@@ -1,35 +1,53 @@
-from wsgiref.headers import Headers
-
 from flask import session
+from app.models.account import User, Bot, StreamingProfile
+from app.models.messaging import Message
 
-from app.main import bp
-from app.models.account import User, Bot
 
+def is_authenticated(args=None, content=session) -> bool:
+    return get_current_user(args, content) is not None
 
-def is_authenticated():
-    return get_current_user() is not None
-
-def get_current_user(args : Headers=None):
-    user = session.get('user', None)
+def get_current_user(args=None, content=session) -> User | None:
+    user = None
+    if content:
+        user = content.get('user', None)
     if user is None:
         if args is None: return None
         token = args.get("X-Api-Key", None)
         if token is None: return None
-        bot = Bot.objects(token=token).first()
+        bot = Bot.nodes.first_or_none(token=token)
         if not bot: return None
-        return bot.user
+        return bot.user.single()
 
-    return User.objects(username=user).first()
+    return User.nodes.first_or_none(username=user)
 
-def get_user(args):
+def get_user(args) -> User or None:
     if "user" not in args:
         return None
-    return User.objects(username=args["user"]).first()
+    return User.nodes.first_or_none(username=args["user"])
 
-@bp.context_processor
-def utility_processor():
-    return dict(
-        is_authenticated=is_authenticated,
-        get_current_user=get_current_user,
-        get_user=get_user
-    )
+def find_streamer(streamer) -> StreamingProfile:
+    user = User.nodes.first_or_none(username=streamer)
+    return user.profile.single()
+
+
+def delete_user(user: User):
+    if user.bot.single():
+        delete_bot(user.bot.single())
+    for bot in user.bots.all():
+        delete_bot(bot)
+    if user.profile.single():
+        delete_profile(user.profile.single())
+    user.delete()
+
+
+def delete_profile(profile: StreamingProfile):
+    for message in profile.messages.all():
+        delete_message(message)
+    profile.delete()
+
+def delete_message(message: Message):
+    message.delete()
+
+
+def delete_bot(bot: Bot):
+    bot.delete()

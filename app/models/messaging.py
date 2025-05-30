@@ -1,11 +1,8 @@
-import datetime
-
-from mongoengine import ReferenceField, DateTimeField, StringField, EmbeddedDocument
-
-from app.models.account import User
+from neomodel import RelationshipFrom, DateTimeProperty, StringProperty, StructuredNode, RelationshipTo
 
 
-class Message(EmbeddedDocument):
-    user = ReferenceField(required=True, document_type=User)
-    timestamp = DateTimeField(required=True, default=datetime.datetime.now)
-    content = StringField(required=True)
+class Message(StructuredNode):
+    streamer = RelationshipTo("app.models.account.StreamingProfile", "MESSAGE")
+    author = RelationshipFrom("app.models.account.User", "AUTHOR")
+    timestamp = DateTimeProperty(default_now=True)
+    content = StringProperty(required=True)

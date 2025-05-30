@@ -1,12 +1,11 @@
-from mongoengine import Document, StringField, FloatField, IntField, ReferenceField
-
-from app.models.account import User
+from neomodel import StructuredNode, StringProperty, RelationshipFrom
 
 
-class FrontendChatService(Document):
-    name = StringField(required=True, unique=True)
-    description = StringField(required=True)
-    author = ReferenceField(document_type=User)
+class FrontendChatService(StructuredNode):
+    name = StringProperty(required=True, unique=True)
+    description = StringProperty(required=True)
+    author = RelationshipFrom("app.models.account.User", "AUTHOR")
 
-    initializer_code = StringField(required=True)
-    converter_code = StringField(required=True)
+    initializer_code = StringProperty(required=True)
+    formatting_code = StringProperty(required=True)
+    style = StringProperty(required=True)

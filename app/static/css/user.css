@@ -22,7 +22,7 @@
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	margin: 10px;
+    padding: 5px;
 }
 .row * {
   	flex: 1 1 auto;
@@ -37,4 +37,3 @@
 	filter: blur(1px);
 	color: gray;
 }
-
