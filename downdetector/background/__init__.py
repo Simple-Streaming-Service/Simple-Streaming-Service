@@ -5,36 +5,46 @@ from downdetector import config
 import requests
 
 
-mediamtx_running = True
-flask_running = True
-graphql_running = True
+mediamtx_running = 1
+flask_running = 1
+graphql_running = 1
 
 
-def ping_mediamtx():
+def ping_media_mtx() -> bool:
     global mediamtx_running
-    response = requests.get(config.MTX_API_URI + "/v3/paths/list", timeout=int(config.MTX_API_TIMEOUT))
-    if response.status_code == 200:
-        if not mediamtx_running:
-            broadcast("MediaMTX", "Соединение с сервером MediaMTX восстановлено!")
-            mediamtx_running = True
-    else:
-        if mediamtx_running:
-            broadcast("MediaMTX", "Соединение с сервером MediaMTX потеряно!")
-            mediamtx_running = False
+    try:
+        requests.get(config.MTX_API_URI + "/v3/paths/list", timeout=int(config.MTX_API_TIMEOUT))
+        if mediamtx_running <= 0:
+            broadcast("MediaMTX", "❗[[MediaMTX]]: ✅ Соединение с сервером восстановлено!")
+            mediamtx_running = 1
+        return True
+    except:
+        if mediamtx_running == -10:
+            broadcast("MediaMTX", "❗❗❗[[MediaMTX]]: ❌ Сервер не отвечает долгое время!")
+        else:
+            if mediamtx_running > 0:
+                broadcast("MediaMTX", "❗[[MediaMTX]]: ❌ Соединение с сервером потеряно!")
+        mediamtx_running -= 1
+        return False
 
-def ping_flask():
+def ping_flask() -> bool:
     global flask_running
-    response = requests.get("http://localhost:5000/api/v1/user/auth", timeout=int(config.FLASK_API_TIMEOUT))
-    if response.status_code == 200:
-        if not flask_running:
-            broadcast("Flask", "Соединение с сервером Flask восстановлено!")
-            flask_running = True
-    else:
-        if flask_running:
-            broadcast("Flask", "Соединение с сервером Flask потеряно!")
-            flask_running = False
+    try:
+        requests.post("http://localhost:5000/api/v1/bot/auth", timeout=int(config.MTX_API_TIMEOUT))
+        if flask_running <= 0:
+            broadcast("Flask", "❗[[Flask]]: ✅ Соединение с сервером восстановлено!")
+            flask_running = 1
+        return True
+    except:
+        if flask_running == -10:
+            broadcast("Flask", "❗❗❗[[Flask]]: ❌ Сервер не отвечает долгое время!")
+        else:
+            if flask_running > 0:
+                broadcast("Flask", "❗[[Flask]]: ❌ Соединение с сервером потеряно!")
+        flask_running -= 1
+        return False
 
-def ping_graphql():
+def ping_graphql() -> bool:
     global graphql_running
     try:
         make_query("""
@@ -43,16 +53,21 @@ def ping_graphql():
                 username
             }
         }
-        """, {}, "http://localhost:5001", {}, timeout=int(config.GRAPHQL_API_TIMEOUT))
-        if not graphql_running:
-            broadcast("GraphQL", "Соединение с сервером GraphQL восстановлено!")
-            graphql_running = True
+        """, {}, "http://localhost:5001", {}, int(config.MTX_API_TIMEOUT))
+        if graphql_running <= 0:
+            broadcast("GraphQL", "❗[[GraphQL]]: ✅ Соединение с сервером восстановлено!")
+            graphql_running = 1
+        return True
     except:
-        if graphql_running:
-            broadcast("GraphQL", "Соединение с сервером GraphQL потеряно!")
-            graphql_running = False
+        if graphql_running == -10:
+            broadcast("GraphQL", "❗❗❗[[GraphQL]]: ❌ Сервер не отвечает долгое время!")
+        else:
+            if graphql_running > 0:
+                broadcast("GraphQL", "❗[[GraphQL]]: ❌ Соединение с сервером потеряно!")
+        graphql_running -= 1
+        return False
 
 
-scheduler.add_job(ping_mediamtx, 'interval', minutes=1)
+scheduler.add_job(ping_media_mtx, 'interval', minutes=1)
 scheduler.add_job(ping_flask, 'interval', minutes=1)
 scheduler.add_job(ping_graphql, 'interval', minutes=1)
