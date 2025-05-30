@@ -89,28 +89,33 @@ def msg_send(streamer):
     timestamp = datetime.fromtimestamp(timestamp)
     if "message" not in data: return {"ok": False, "error": "Content field is required!"}
     try:
-        result = make_query(
+        data = make_query(
             """
-                mutation SendMessage {
-                    sendMessage(streamer: $streamer, message: $message, timestamp: $timestamp) {
-                        ok
-                        error
-                        msg
-                        timestamp
-                    }
+            mutation SendMessage($streamer:String!, $message:String!, $timestamp:DateTime) {
+                sendMessage(streamer: $streamer, message: $message, timestamp: $timestamp) {
+                    ok
+                    error
+                    msg
+                    timestamp
                 }
-            """,
-            {
+            }
+            """,{
                 "streamer": streamer,
-                "message": data["message"],
-                "timestamp": timestamp.isoformat()
+                "message": data['message'],
+                "timestamp": timestamp.isoformat(),
             },
             "http://localhost:5001",
-            request.headers
+            {
+                "Content-Type": "application/json",
+                "Cookie": request.headers.get("Cookie"),
+                "X-Api-Key:": request.headers.get("X-Api-Key")
+            }
         )
-        if "ok" in result and result["ok"]:
-            return {"ok": True, "msg": result["msg"] | "Message sent!", "timestamp": timestamp}
-        else:
-            return {"ok": False, "error": result["error"] | "Message sending failed!"}
-    except:
-        return {"ok": False, "error": "Message sending failed!"}
+        data = data["data"]["sendMessage"]
+        print(data, flush=True)
+        if "ok" in data and data["ok"]:
+            return {"ok": True, "msg": data["msg"] if "msg" in data else "Message sent!", "timestamp": timestamp}
+        return {"ok": False, "error": data["error"] if "error" in data else "Message sending failed!"}
+    except Exception as e:
+        print(e, flush=True)
+        return {"ok": False, "error": "Message sending failed!", "exception": str(e)}
